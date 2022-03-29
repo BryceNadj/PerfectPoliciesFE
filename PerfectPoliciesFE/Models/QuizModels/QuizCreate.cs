@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using PerfectPoliciesFE.Models.QuestionModels;
 
 namespace PerfectPoliciesFE.Models.QuizModels
 {

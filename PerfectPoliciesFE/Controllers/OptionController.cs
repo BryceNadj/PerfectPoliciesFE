@@ -1,8 +1,13 @@
-﻿using PerfectPoliciesFE.Models.OptionModels;
-using PerfectPoliciesFE.Models.QuestionModels;
-using PerfectPoliciesFE.Services;
-using Microsoft.AspNetCore.Http;
+﻿using System;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using PerfectPoliciesFE.Helpers;
+using PerfectPoliciesFE.Services;
+using PerfectPoliciesFE.Models.QuizModels;
+using PerfectPoliciesFE.Models.OptionModels;
+using PerfectPoliciesFE.Models.QuestionModels;
 
 namespace PerfectPoliciesFE.Controllers
 {
@@ -14,15 +19,46 @@ namespace PerfectPoliciesFE.Controllers
         private readonly string optionController = "Option";
 
         // GET: OptionController
-        public ActionResult Index()
+        public OptionController(IApiRequest<Option> apiRequest)
         {
-            return View();
+            _apiRequest = apiRequest;
+        }
+
+        [HttpPost]
+        public IActionResult Filter(IFormCollection collection)
+        {
+            var result = collection["optionDDL"].ToString();
+            return RedirectToAction("Index", new { filter = result });
+        }
+
+        // GET: OptionController
+        public ActionResult Index(string filter = "")
+        {
+            var optionList = _apiRequest.GetAll(optionController);
+
+            var optionDDL = optionList.Select(c => new SelectListItem
+            {
+                Value = c.OptionText
+            });
+
+            ViewBag.OptionDDL = optionDDL;
+
+            if (!String.IsNullOrEmpty(filter))
+            {
+                var optionFilteredList = optionList.Where(c => c.OptionText == filter);
+                return View(optionFilteredList);
+
+            }
+
+            return View(optionList);
         }
 
         // GET: OptionController/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            Option option = _apiRequest.GetSingle(optionController, id);
+
+            return View(option);
         }
 
         // GET: OptionController/Create
@@ -34,11 +70,23 @@ namespace PerfectPoliciesFE.Controllers
         // POST: OptionController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(OptionCreate option)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+
+                Option createdOption = new Option()
+                {
+                    OptionText = option.OptionText,
+                    Order = option.Order,
+                    IsCorrect = option.IsCorrect
+                };
+
+                _apiRequest.Create(optionController, createdOption);
+
+                //OptionService.CreateNewOption(option);
+
+                return RedirectToAction("Index");
             }
             catch
             {
@@ -49,16 +97,30 @@ namespace PerfectPoliciesFE.Controllers
         // GET: OptionController/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+
+            Option option = _apiRequest.GetSingle(optionController, id);
+
+            return View(option);
         }
 
         // POST: OptionController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, Option option)
         {
             try
             {
+                if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
+                {
+                    return RedirectToAction("Login", "Auth");
+                }
+
+                _apiRequest.Edit(optionController, option, id);
+
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -70,7 +132,14 @@ namespace PerfectPoliciesFE.Controllers
         // GET: OptionController/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+
+            Option option = _apiRequest.GetSingle(optionController, id);
+
+            return View(option);
         }
 
         // POST: OptionController/Delete/5
@@ -80,6 +149,14 @@ namespace PerfectPoliciesFE.Controllers
         {
             try
             {
+
+                if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
+                {
+                    return RedirectToAction("Login", "Auth");
+                }
+
+                _apiRequest.Delete(optionController, id);
+
                 return RedirectToAction(nameof(Index));
             }
             catch

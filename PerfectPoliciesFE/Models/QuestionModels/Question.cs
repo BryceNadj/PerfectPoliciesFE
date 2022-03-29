@@ -12,7 +12,10 @@ namespace PerfectPoliciesFE.Models.QuestionModels
         // Attributes
         public string Topic { get; set; }
         public string QuestionText { get; set; }
+        
+        #nullable enable
         public string? Image { get; set; }
+        #nullable disable
 
         // Foreign Key
         public int QuizId { get; set; }

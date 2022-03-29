@@ -1,12 +1,12 @@
-﻿using PerfectPoliciesFE.Services;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using System;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using PerfectPoliciesFE.Models.QuestionModels;
-using PerfectPoliciesFE.Models.QuizModels;
 using PerfectPoliciesFE.Helpers;
-using System;
+using PerfectPoliciesFE.Services;
+using PerfectPoliciesFE.Models.QuizModels;
+using PerfectPoliciesFE.Models.QuestionModels;
 
 namespace PerfectPoliciesFE.Controllers
 {
@@ -32,11 +32,6 @@ namespace PerfectPoliciesFE.Controllers
         // GET: QuizController
         public ActionResult Index(string filter = "")
         {
-            if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
-            {
-                return RedirectToAction("Login", "Auth");
-            }
-
             var quizList = _apiRequest.GetAll(quizController);
 
             var quizDDL = quizList.Select(c => new SelectListItem
@@ -49,17 +44,20 @@ namespace PerfectPoliciesFE.Controllers
 
             if (!String.IsNullOrEmpty(filter))
             {
-                var quizfilteredList = quizList.Where(c => c.Author == filter);
-                return View(quizfilteredList);
+                var quizFilteredList = quizList.Where(c => c.Author == filter);
+                return View(quizFilteredList);
 
             }
+
             return View(quizList);
         }
 
         // GET: QuizController/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            Quiz quiz = _apiRequest.GetSingle(quizController, id);
+
+            return View(quiz);
         }
 
         // GET: QuizController/Create
@@ -71,11 +69,25 @@ namespace PerfectPoliciesFE.Controllers
         // POST: QuizController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(QuizCreate quiz)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+
+                Quiz createdQuiz = new Quiz()
+                {
+                    Title = quiz.Title,
+                    Topic = quiz.Topic,
+                    Author = quiz.Author,
+                    DateCreated = quiz.DateCreated,
+                    PassingGrade = quiz.PassingGrade
+                };
+
+                _apiRequest.Create(quizController, createdQuiz);
+
+                //QuizService.CreateNewQuiz(quiz);
+
+                return RedirectToAction("Index");
             }
             catch
             {
@@ -86,16 +98,30 @@ namespace PerfectPoliciesFE.Controllers
         // GET: QuizController/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+
+            Quiz quiz = _apiRequest.GetSingle(quizController, id);
+
+            return View(quiz);
         }
 
         // POST: QuizController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, Quiz quiz)
         {
             try
             {
+                if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
+                {
+                    return RedirectToAction("Login", "Auth");
+                }
+
+                _apiRequest.Edit(quizController, quiz, id);
+
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -107,7 +133,14 @@ namespace PerfectPoliciesFE.Controllers
         // GET: QuizController/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+
+            Quiz quiz = _apiRequest.GetSingle(quizController, id);
+
+            return View(quiz);
         }
 
         // POST: QuizController/Delete/5
@@ -117,6 +150,14 @@ namespace PerfectPoliciesFE.Controllers
         {
             try
             {
+
+                if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
+                {
+                    return RedirectToAction("Login", "Auth");
+                }
+
+                _apiRequest.Delete(quizController, id);
+
                 return RedirectToAction(nameof(Index));
             }
             catch

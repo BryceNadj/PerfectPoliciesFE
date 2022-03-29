@@ -1,11 +1,8 @@
-﻿using PerfectPoliciesFE.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using System.Net.Http;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using PerfectPoliciesFE.Models;
 
 namespace PerfectPoliciesFE.Controllers
 {
@@ -27,13 +24,14 @@ namespace PerfectPoliciesFE.Controllers
 
                 var response = client.PostAsJsonAsync("Auth/GenerateToken", user).Result;
 
-                if(response.IsSuccessStatusCode)
+                if (response.IsSuccessStatusCode)
                 {
                     // logged in
                     token = response.Content.ReadAsStringAsync().Result;
 
                     // Store the token in the session
                     HttpContext.Session.SetString("Token", token);
+
                 }
                 else
                 {
@@ -43,6 +41,7 @@ namespace PerfectPoliciesFE.Controllers
                     return View();
                 }
             }
+
             return RedirectToAction("Index", "Home");
         }
 

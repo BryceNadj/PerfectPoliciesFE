@@ -1,14 +1,13 @@
-﻿using System.Collections.Generic;
-using PerfectPoliciesFE.Models.OptionModels;
-using PerfectPoliciesFE.Models.QuizModels;
-
-namespace PerfectPoliciesFE.Models.QuestionModels
+﻿namespace PerfectPoliciesFE.Models.QuestionModels
 {
     public class QuestionCreate
     {
         // Attributes
         public string Topic { get; set; }
         public string QuestionText { get; set; }
+
+        #nullable enable
         public string? Image { get; set; }
+        #nullable disable
     }
 }
