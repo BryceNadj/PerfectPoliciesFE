@@ -20,16 +20,11 @@ namespace PerfectPoliciesFE.Controllers
         private readonly string questionController = "Question";
 
         // GET: QuestionController
-        public QuestionController(IApiRequest<Question> apiRequest)
+        public QuestionController(IApiRequest<Question> apiRequest, IApiRequest<Option> apiOptionRequest, IApiRequest<Quiz> apiQuizRequest)
         {
             _apiRequest = apiRequest;
-        }
-
-        [HttpPost]
-        public IActionResult Filter(IFormCollection collection)
-        {
-            var result = collection["questionDDL"].ToString();
-            return RedirectToAction("Index", new { filter = result });
+            _apiOptionRequest = apiOptionRequest;
+            _apiQuizRequest = apiQuizRequest;
         }
 
         // GET: QuestionController
@@ -66,6 +61,20 @@ namespace PerfectPoliciesFE.Controllers
         // GET: QuestionController/Create
         public ActionResult Create()
         {
+            // Get a list of quizzes from the API
+            var quiz = _apiQuizRequest.GetAll("Quiz");
+
+
+            var quizDropDownListModel = quiz.Select(c => new SelectListItem
+            {
+                Text = c.Title,
+                Value = c.QuizId.ToString()
+            }).ToList();
+
+            ViewBag.TeacherDropDown = quizDropDownListModel;
+
+            ViewData.Add("quizDDL", quizDropDownListModel);
+
             return View();
         }
 

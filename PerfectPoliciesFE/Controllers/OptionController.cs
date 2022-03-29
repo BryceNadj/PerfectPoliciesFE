@@ -14,7 +14,7 @@ namespace PerfectPoliciesFE.Controllers
     public class OptionController : Controller
     {
         private readonly IApiRequest<Option> _apiRequest;
-        private readonly IApiRequest<Question> _apiQuestionRequest;
+        // private readonly IApiRequest<Question> _apiQuestionRequest;
 
         private readonly string optionController = "Option";
 
