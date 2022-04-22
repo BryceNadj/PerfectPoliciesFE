@@ -8,7 +8,16 @@ namespace PerfectPoliciesFE.Models.QuizModels
         public string Title { get; set; }
         public string Topic { get; set; }
         public string Author { get; set; }
-        public DateTime? DateCreated { get; set; }
+
+        private DateTime? DateCreated;
+
+        public DateTime? DateCreatedProperty
+        {
+            get { return DateTime.Now; }
+            set { DateCreated = value; }
+        }
+
+
         public int PassingGrade { get; set; }
     }
 }

@@ -9,6 +9,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
+using PerfectPoliciesFE.Services;
+using PerfectPoliciesFE.Models.QuestionModels;
+using PerfectPoliciesFE.Models.QuizModels;
 
 namespace PerfectPoliciesFE
 {
@@ -24,7 +28,25 @@ namespace PerfectPoliciesFE
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddRazorPages();
+            services.AddControllersWithViews();
+
+            // create an in memory Database for storing session content
+            services.AddDistributedMemoryCache();
+
+            // Define the session parameters
+            services.AddSession(opts =>
+            {
+                opts.IdleTimeout = TimeSpan.FromMinutes(3);
+                opts.Cookie.HttpOnly = true;
+                opts.Cookie.IsEssential = true;
+            });
+
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            services.AddScoped<IApiRequest<Question>, ApiRequest<Question>>();
+            //services.AddSingleton<IApiRequest<Option>, ApiTestRequest<Option>>();
+            services.AddSingleton<IApiRequest<Quiz>, ApiRequest<Quiz>>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,14 +65,14 @@ namespace PerfectPoliciesFE
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
-
-            app.UseAuthorization();
+            // app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapRazorPages();
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

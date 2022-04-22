@@ -6,24 +6,25 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using PerfectPoliciesFE.Helpers;
 using PerfectPoliciesFE.Services;
 using PerfectPoliciesFE.Models.QuizModels;
-using PerfectPoliciesFE.Models.OptionModels;
+//using PerfectPoliciesFE.Models.OptionModels;
 using PerfectPoliciesFE.Models.QuestionModels;
+using System.Collections.Generic;
 
 namespace PerfectPoliciesFE.Controllers
 {
     public class QuestionController : Controller
     {
         private readonly IApiRequest<Question> _apiRequest;
-        private readonly IApiRequest<Option> _apiOptionRequest;
+        //private readonly IApiRequest<Option> _apiOptionRequest;
         private readonly IApiRequest<Quiz> _apiQuizRequest;
 
         private readonly string questionController = "Question";
 
         // GET: QuestionController
-        public QuestionController(IApiRequest<Question> apiRequest, IApiRequest<Option> apiOptionRequest, IApiRequest<Quiz> apiQuizRequest)
+        public QuestionController(IApiRequest<Question> apiRequest,/* IApiRequest<Option> apiOptionRequest, */IApiRequest<Quiz> apiQuizRequest)
         {
             _apiRequest = apiRequest;
-            _apiOptionRequest = apiOptionRequest;
+            // _apiOptionRequest = apiOptionRequest;
             _apiQuizRequest = apiQuizRequest;
         }
 
@@ -58,6 +59,14 @@ namespace PerfectPoliciesFE.Controllers
             return View(question);
         }
 
+        public ActionResult QuestionsByQuizId(int id)
+        {
+            List<Question> questions = _apiRequest.GetAll(questionController); // GetAllForParentId(questionController, "QuestionsByQuizId", id);
+            var filteredList = questions.Where(c => c.QuizId.Equals(id)).ToList();
+
+            return View("Index", filteredList);
+        }
+
         // GET: QuestionController/Create
         public ActionResult Create()
         {
@@ -85,7 +94,6 @@ namespace PerfectPoliciesFE.Controllers
         {
             try
             {
-
                 Question createdQuestion = new Question()
                 {
                     Topic = question.Topic,

@@ -1,0 +1,68 @@
+﻿@model IEnumerable<PerfectPoliciesFE.Models.QuizModels.Quiz>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.QuizId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Topic)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Author)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DateCreated)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PassingGrade)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.QuizId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Topic)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Author)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateCreated)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PassingGrade)
+            </td>
+            <td>
+                @Html.ActionLink("Questions", "QuestionsByQuizId", "Question", new { id = item.QuizId }, new { @class = "btn btn-primary" })
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id=item.QuizId }) |
+                @Html.ActionLink("Details", "Details", new { id=item.QuizId }) |
+                @Html.ActionLink("Delete", "Delete", new { id=item.QuizId })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

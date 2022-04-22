@@ -7,6 +7,7 @@ using PerfectPoliciesFE.Helpers;
 using PerfectPoliciesFE.Services;
 using PerfectPoliciesFE.Models.QuizModels;
 using PerfectPoliciesFE.Models.QuestionModels;
+using System.Collections.Generic;
 
 namespace PerfectPoliciesFE.Controllers
 {
@@ -72,13 +73,12 @@ namespace PerfectPoliciesFE.Controllers
         {
             try
             {
-
                 Quiz createdQuiz = new Quiz()
                 {
                     Title = quiz.Title,
                     Topic = quiz.Topic,
                     Author = quiz.Author,
-                    DateCreated = quiz.DateCreated,
+                    DateCreated = DateTime.Now,
                     PassingGrade = quiz.PassingGrade
                 };
 
@@ -163,6 +163,16 @@ namespace PerfectPoliciesFE.Controllers
             {
                 return View();
             }
+        }
+
+        [HttpPost]
+        public IActionResult FilterQuiz(IFormCollection collection)
+        {
+            string filterText = collection["topic"];
+            var quizList = _apiRequest.GetAll(quizController);
+            var filterList = quizList.Where(c => c.Topic.Contains(filterText)).ToList();
+
+            return View("Index", filterList);
         }
     }
 }

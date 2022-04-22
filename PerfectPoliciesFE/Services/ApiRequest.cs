@@ -21,11 +21,12 @@ namespace PerfectPoliciesFE.Services
             if(_client == null)
             {
                 _client = new HttpClient();
-                _client.BaseAddress = new Uri("https://localhost:44379/api/");
+                _client.BaseAddress = new Uri("https://localhost:44363/api/");
                 _client.DefaultRequestHeaders.Clear();
                 _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             }
 
+            /*
             // if true, a token exists in the session
             if(_httpContext.Session.GetString("Token") != null)
             {
@@ -33,7 +34,7 @@ namespace PerfectPoliciesFE.Services
                 _client.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer", _httpContext.Session.GetString("Token"));
             }
-
+            */
         }
         public List<T> GetAll(string controllerName)
         {
@@ -65,7 +66,6 @@ namespace PerfectPoliciesFE.Services
         public void Delete(string controllerName, int id)
         {
             HttpResponseMessage response = _client.DeleteAsync($"{controllerName}/{id}").Result;
-
         }
 
         public T Edit(string controllerName, T entity, int id)
