@@ -71,18 +71,16 @@ namespace PerfectPoliciesFE.Controllers
         public ActionResult Create()
         {
             // Get a list of quizzes from the API
-            var quiz = _apiQuizRequest.GetAll("Quiz");
+            var quizList = _apiQuizRequest.GetAll("Quiz");
 
 
-            var quizDropDownListModel = quiz.Select(c => new SelectListItem
+            var quizDropDownListModel = quizList.Select(c => new SelectListItem
             {
                 Text = c.Title,
                 Value = c.QuizId.ToString()
             }).ToList();
 
             ViewBag.TeacherDropDown = quizDropDownListModel;
-
-            ViewData.Add("quizDDL", quizDropDownListModel);
 
             return View();
         }
@@ -98,7 +96,8 @@ namespace PerfectPoliciesFE.Controllers
                 {
                     Topic = question.Topic,
                     QuestionText = question.QuestionText,
-                    Image = question.Image
+                    Image = question.Image,
+                    QuizId = question.QuizId
                 };
 
                 _apiRequest.Create(questionController, createdQuestion);

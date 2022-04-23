@@ -9,5 +9,7 @@
         #nullable enable
         public string? Image { get; set; }
         #nullable disable
+
+        public int QuizId { get; set; }
     }
 }
