@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using PerfectPoliciesFE.Helpers;
 using PerfectPoliciesFE.Services;
 using PerfectPoliciesFE.Models.QuizModels;
-//using PerfectPoliciesFE.Models.OptionModels;
 using PerfectPoliciesFE.Models.QuestionModels;
 using System.Collections.Generic;
 
@@ -15,16 +14,14 @@ namespace PerfectPoliciesFE.Controllers
     public class QuestionController : Controller
     {
         private readonly IApiRequest<Question> _apiRequest;
-        //private readonly IApiRequest<Option> _apiOptionRequest;
         private readonly IApiRequest<Quiz> _apiQuizRequest;
 
         private readonly string questionController = "Question";
 
         // GET: QuestionController
-        public QuestionController(IApiRequest<Question> apiRequest,/* IApiRequest<Option> apiOptionRequest, */IApiRequest<Quiz> apiQuizRequest)
+        public QuestionController(IApiRequest<Question> apiRequest, IApiRequest<Quiz> apiQuizRequest)
         {
             _apiRequest = apiRequest;
-            // _apiOptionRequest = apiOptionRequest;
             _apiQuizRequest = apiQuizRequest;
         }
 
@@ -45,7 +42,6 @@ namespace PerfectPoliciesFE.Controllers
             {
                 var questionFilteredList = questionList.Where(c => c.Topic == filter);
                 return View(questionFilteredList);
-
             }
 
             return View(questionList);
@@ -61,8 +57,10 @@ namespace PerfectPoliciesFE.Controllers
 
         public ActionResult QuestionsByQuizId(int id)
         {
-            List<Question> questions = _apiRequest.GetAll(questionController); // GetAllForParentId(questionController, "QuestionsByQuizId", id);
+            List<Question> questions = _apiRequest.GetAll(questionController); 
             var filteredList = questions.Where(c => c.QuizId.Equals(id)).ToList();
+
+            ViewBag.QuizId = id;
 
             return View("Index", filteredList);
         }
@@ -70,19 +68,17 @@ namespace PerfectPoliciesFE.Controllers
         // GET: QuestionController/Create
         public ActionResult Create()
         {
-            // Get a list of quizzes from the API
-            var quizList = _apiQuizRequest.GetAll("Quiz");
-
-
-            var quizDropDownListModel = quizList.Select(c => new SelectListItem
-            {
-                Text = c.Title,
-                Value = c.QuizId.ToString()
-            }).ToList();
-
-            ViewBag.TeacherDropDown = quizDropDownListModel;
-
             return View();
+        }
+
+        public ActionResult CreateForQuiz(int id)
+        {
+            QuestionCreate question = new QuestionCreate
+            {
+                QuizId = id
+            };
+
+            return View(question);
         }
 
         // POST: QuestionController/Create

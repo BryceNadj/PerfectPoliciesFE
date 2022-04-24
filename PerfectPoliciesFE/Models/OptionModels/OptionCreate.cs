@@ -8,5 +8,6 @@ namespace PerfectPoliciesFE.Models.OptionModels
         public string OptionText { get; set; }
         public string Order { get; set; }
         public bool IsCorrect { get; set; }
+        public int QuestionId { get; set; }
     }
 }

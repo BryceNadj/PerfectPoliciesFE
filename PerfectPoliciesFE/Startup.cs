@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Http;
 using PerfectPoliciesFE.Services;
 using PerfectPoliciesFE.Models.QuestionModels;
 using PerfectPoliciesFE.Models.QuizModels;
+using PerfectPoliciesFE.Models.OptionModels;
 
 namespace PerfectPoliciesFE
 {
@@ -43,10 +44,9 @@ namespace PerfectPoliciesFE
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-            services.AddScoped<IApiRequest<Question>, ApiRequest<Question>>();
-            //services.AddSingleton<IApiRequest<Option>, ApiTestRequest<Option>>();
             services.AddSingleton<IApiRequest<Quiz>, ApiRequest<Quiz>>();
-
+            services.AddScoped<IApiRequest<Question>, ApiRequest<Question>>();
+            services.AddScoped<IApiRequest<Option>, ApiRequest<Option>>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

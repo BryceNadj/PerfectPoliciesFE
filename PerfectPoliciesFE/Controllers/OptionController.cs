@@ -8,13 +8,13 @@ using PerfectPoliciesFE.Services;
 using PerfectPoliciesFE.Models.QuizModels;
 using PerfectPoliciesFE.Models.OptionModels;
 using PerfectPoliciesFE.Models.QuestionModels;
+using System.Collections.Generic;
 
 namespace PerfectPoliciesFE.Controllers
 {
     public class OptionController : Controller
     {
         private readonly IApiRequest<Option> _apiRequest;
-        // private readonly IApiRequest<Question> _apiQuestionRequest;
 
         private readonly string optionController = "Option";
 
@@ -61,10 +61,29 @@ namespace PerfectPoliciesFE.Controllers
             return View(option);
         }
 
+        public ActionResult OptionsByQuestionId(int id)
+        {
+            List<Option> options = _apiRequest.GetAll(optionController); 
+            var filteredList = options.Where(c => c.QuestionId.Equals(id)).ToList();
+
+            ViewBag.QuestionId = id;
+
+            return View("Index", filteredList);
+        }
+
         // GET: OptionController/Create
         public ActionResult Create()
         {
             return View();
+        }
+
+        public ActionResult CreateForQuestion(int id)
+        {
+            OptionCreate option = new OptionCreate
+            {
+                QuestionId = id
+            };
+            return View(option);
         }
 
         // POST: OptionController/Create
@@ -74,12 +93,12 @@ namespace PerfectPoliciesFE.Controllers
         {
             try
             {
-
                 Option createdOption = new Option()
                 {
                     OptionText = option.OptionText,
                     Order = option.Order,
-                    IsCorrect = option.IsCorrect
+                    IsCorrect = option.IsCorrect,
+                    QuestionId = option.QuestionId
                 };
 
                 _apiRequest.Create(optionController, createdOption);
