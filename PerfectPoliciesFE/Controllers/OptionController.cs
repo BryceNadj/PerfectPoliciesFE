@@ -66,8 +66,6 @@ namespace PerfectPoliciesFE.Controllers
             List<Option> options = _apiRequest.GetAll(optionController); 
             var filteredList = options.Where(c => c.QuestionId.Equals(id)).ToList();
 
-            ViewBag.QuestionId = id;
-
             return View("Index", filteredList);
         }
 
@@ -103,9 +101,7 @@ namespace PerfectPoliciesFE.Controllers
 
                 _apiRequest.Create(optionController, createdOption);
 
-                //OptionService.CreateNewOption(option);
-
-                return RedirectToAction("Index");
+                return RedirectToAction("OptionsByQuestionId", "Option", new { id = option.QuestionId });
             }
             catch
             {

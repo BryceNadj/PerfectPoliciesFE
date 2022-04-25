@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "Edit";
+
+    var questionId = Context.Request.RouteValues.Where(c => c.Key == "id").FirstOrDefault().Value;
 }
 
 <h1>Edit</h1>
@@ -45,6 +47,6 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    @Html.ActionLink("Back To List", "OptionsByQuestionId", "Option", new { id = Model.QuestionId })
 </div>
 

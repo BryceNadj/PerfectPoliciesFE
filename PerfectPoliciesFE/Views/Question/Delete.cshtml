@@ -45,6 +45,6 @@
     
     <form asp-action="Delete">
         <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        @Html.ActionLink("Back To List", "QuestionsByQuizId", "Question", new { id = Model.QuizId })
     </form>
 </div>

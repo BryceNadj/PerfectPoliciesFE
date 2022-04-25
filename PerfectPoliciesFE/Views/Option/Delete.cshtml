@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "Delete";
+
+    var questionId = Context.Request.RouteValues.Where(c => c.Key == "id").FirstOrDefault().Value;
 }
 
 <h1>Delete</h1>
@@ -45,6 +47,6 @@
     
     <form asp-action="Delete">
         <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        @Html.ActionLink("Back To List", "OptionsByQuestionId", "Option", new { id = Model.QuestionId })
     </form>
 </div>

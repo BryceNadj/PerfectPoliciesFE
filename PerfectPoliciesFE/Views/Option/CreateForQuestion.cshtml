@@ -1,9 +1,7 @@
 ﻿@model PerfectPoliciesFE.Models.OptionModels.OptionCreate
 
 @{
-    ViewData["Title"] = "CreateForQuestion";
-
-    var questionId = Context.Request.RouteValues.Where(c => c.Key == "id").FirstOrDefault().Value;
+    ViewData["Title"] = "CreateForQuestion";var questionId = Context.Request.RouteValues.Where(c => c.Key == "id").FirstOrDefault().Value;
 }
 
 <h1>CreateForQuestion</h1>
@@ -32,19 +30,19 @@
             @*
         <div class="form-group">
             <label asp-for="QuestionId" class="control-label"></label>
-            <input asp-for="QuestionId" class="form-control" />
+            <input asp-for="QuestionId" class="form-control" readonly />
             <span asp-validation-for="QuestionId" class="text-danger"></span>
         </div>
             *@
             @Html.HiddenFor(c => c.QuestionId)
-        <div class="form-group">
-
-        </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a> @Html.ActionLink("Back", "OptionsByQuestionId", "Option", new { id = questionId })</a>
+    @Html.ActionLink("Back", "OptionsByQuestionId", "Option", new { id = Model.QuestionId })
 </div>
 

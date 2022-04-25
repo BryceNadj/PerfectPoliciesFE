@@ -60,8 +60,6 @@ namespace PerfectPoliciesFE.Controllers
             List<Question> questions = _apiRequest.GetAll(questionController); 
             var filteredList = questions.Where(c => c.QuizId.Equals(id)).ToList();
 
-            ViewBag.QuizId = id;
-
             return View("Index", filteredList);
         }
 
@@ -98,9 +96,7 @@ namespace PerfectPoliciesFE.Controllers
 
                 _apiRequest.Create(questionController, createdQuestion);
 
-                //QuestionService.CreateNewQuestion(question);
-
-                return RedirectToAction("Index");
+                return RedirectToAction("QuestionsByQuizId", "Question", new { id = question.QuizId });
             }
             catch
             {
