@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using PerfectPoliciesFE.Helpers;
 using PerfectPoliciesFE.Services;
-using PerfectPoliciesFE.Models.QuizModels;
 using PerfectPoliciesFE.Models.OptionModels;
 using PerfectPoliciesFE.Models.QuestionModels;
 using System.Collections.Generic;
@@ -15,13 +14,16 @@ namespace PerfectPoliciesFE.Controllers
     public class OptionController : Controller
     {
         private readonly IApiRequest<Option> _apiRequest;
+        private readonly IApiRequest<Question> _apiQuestionRequest;
 
         private readonly string optionController = "Option";
+        private readonly string questionController = "Question";
 
         // GET: OptionController
-        public OptionController(IApiRequest<Option> apiRequest)
+        public OptionController(IApiRequest<Option> apiRequest, IApiRequest<Question> apiQuestionRequest)
         {
             _apiRequest = apiRequest;
+            _apiQuestionRequest = apiQuestionRequest;
         }
 
         [HttpPost]
@@ -36,18 +38,10 @@ namespace PerfectPoliciesFE.Controllers
         {
             var optionList = _apiRequest.GetAll(optionController);
 
-            var optionDDL = optionList.Select(c => new SelectListItem
-            {
-                Value = c.OptionText
-            });
-
-            ViewBag.OptionDDL = optionDDL;
-
             if (!String.IsNullOrEmpty(filter))
             {
                 var optionFilteredList = optionList.Where(c => c.OptionText == filter);
                 return View(optionFilteredList);
-
             }
 
             return View(optionList);
@@ -57,16 +51,21 @@ namespace PerfectPoliciesFE.Controllers
         public ActionResult Details(int id)
         {
             Option option = _apiRequest.GetSingle(optionController, id);
+            Question question = _apiQuestionRequest.GetSingle(questionController, option.QuestionId);
+            ViewBag.quizId = question.QuizId;
 
             return View(option);
         }
 
-        public ActionResult OptionsByQuestionId(int id)
+        // GET: OptionController/OptionsByQuestionId/{questionId}?quizId={quizId}
+        public ActionResult OptionsByQuestionId(int id, int quizId)
         {
             List<Option> options = _apiRequest.GetAll(optionController); 
-            var filteredList = options.Where(c => c.QuestionId.Equals(id)).ToList();
+            var filteredOptionList = options.Where(c => c.QuestionId.Equals(id)).ToList();
 
-            return View("Index", filteredList);
+            ViewBag.quizId = quizId;
+
+            return View("Index", filteredOptionList);
         }
 
         // GET: OptionController/Create
@@ -77,10 +76,14 @@ namespace PerfectPoliciesFE.Controllers
 
         public ActionResult CreateForQuestion(int id)
         {
+            Question question = _apiQuestionRequest.GetSingle(questionController, id);
             OptionCreate option = new OptionCreate
             {
                 QuestionId = id
             };
+
+            ViewBag.quizId = question.QuizId;
+
             return View(option);
         }
 
@@ -99,9 +102,12 @@ namespace PerfectPoliciesFE.Controllers
                     QuestionId = option.QuestionId
                 };
 
+                Question question = _apiQuestionRequest.GetSingle(questionController, createdOption.QuestionId);
+                ViewBag.quizId = question.QuizId;
+
                 _apiRequest.Create(optionController, createdOption);
 
-                return RedirectToAction("OptionsByQuestionId", "Option", new { id = option.QuestionId });
+                return RedirectToAction("OptionsByQuestionId", "Option", new { id = option.QuestionId, quizId = ViewBag.quizId });
             }
             catch
             {
@@ -118,6 +124,8 @@ namespace PerfectPoliciesFE.Controllers
             }
 
             Option option = _apiRequest.GetSingle(optionController, id);
+            Question question = _apiQuestionRequest.GetSingle(questionController, option.QuestionId);
+            ViewBag.quizId = question.QuestionId;
 
             return View(option);
         }
@@ -136,6 +144,9 @@ namespace PerfectPoliciesFE.Controllers
 
                 _apiRequest.Edit(optionController, option, id);
 
+                Question question = _apiQuestionRequest.GetSingle(questionController, option.QuestionId);
+                ViewBag.quizId = question.QuizId;
+
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -153,6 +164,8 @@ namespace PerfectPoliciesFE.Controllers
             }
 
             Option option = _apiRequest.GetSingle(optionController, id);
+            Question question = _apiQuestionRequest.GetSingle(questionController, option.QuestionId);
+            ViewBag.quizId = question.QuizId;
 
             return View(option);
         }
@@ -164,15 +177,18 @@ namespace PerfectPoliciesFE.Controllers
         {
             try
             {
-
                 if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
                 {
                     return RedirectToAction("Login", "Auth");
                 }
 
+                Option option = _apiRequest.GetSingle(optionController, id);
+                Question question = _apiQuestionRequest.GetSingle(questionController, option.QuestionId);
+                ViewBag.quizId = question.QuizId;
+
                 _apiRequest.Delete(optionController, id);
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("OptionsByQuestionId", "Option", new { id = option.QuestionId, quizId = ViewBag.quizId });
             }
             catch
             {

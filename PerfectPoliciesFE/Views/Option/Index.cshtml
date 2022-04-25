@@ -4,6 +4,8 @@
     ViewData["Title"] = "Index";
 
     var questionId = Context.Request.RouteValues.Where(c => c.Key == "id").FirstOrDefault().Value;
+
+    var quizId = ViewBag.quizId;
 }
 
 <h1>Index</h1>
@@ -68,3 +70,6 @@
 }
     </tbody>
 </table>
+<div>
+    @Html.ActionLink("Back To Questions", "QuestionsByQuizId", "Question", new { id = quizId })
+</div>

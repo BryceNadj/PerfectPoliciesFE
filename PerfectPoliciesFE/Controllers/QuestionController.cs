@@ -30,14 +30,6 @@ namespace PerfectPoliciesFE.Controllers
         {
             var questionList = _apiRequest.GetAll(questionController);
 
-            var questionDDL = questionList.Select(c => new SelectListItem
-            {
-                Value = c.Topic,
-                Text = c.Topic
-            });
-
-            ViewBag.QuestionDDL = questionDDL;
-
             if (!String.IsNullOrEmpty(filter))
             {
                 var questionFilteredList = questionList.Where(c => c.Topic == filter);
@@ -51,7 +43,7 @@ namespace PerfectPoliciesFE.Controllers
         public ActionResult Details(int id)
         {
             Question question = _apiRequest.GetSingle(questionController, id);
-
+            ViewBag.quizId = question.QuizId;
             return View(question);
         }
 
@@ -76,6 +68,8 @@ namespace PerfectPoliciesFE.Controllers
                 QuizId = id
             };
 
+            ViewBag.quizId = id;
+
             return View(question);
         }
 
@@ -95,6 +89,7 @@ namespace PerfectPoliciesFE.Controllers
                 };
 
                 _apiRequest.Create(questionController, createdQuestion);
+                ViewBag.quizId = createdQuestion.QuizId;
 
                 return RedirectToAction("QuestionsByQuizId", "Question", new { id = question.QuizId });
             }
@@ -113,6 +108,7 @@ namespace PerfectPoliciesFE.Controllers
             }
 
             Question question = _apiRequest.GetSingle(questionController, id);
+            ViewBag.quizId = id;
 
             return View(question);
         }
@@ -130,11 +126,13 @@ namespace PerfectPoliciesFE.Controllers
                 }
 
                 _apiRequest.Edit(questionController, question, id);
+                ViewBag.quizId = question.QuizId;
 
                 return RedirectToAction(nameof(Index));
             }
             catch
             {
+                ViewBag.quizId = question.QuizId;
                 return View();
             }
         }
@@ -148,6 +146,7 @@ namespace PerfectPoliciesFE.Controllers
             }
 
             Question question = _apiRequest.GetSingle(questionController, id);
+            ViewBag.quizId = question.QuizId;
 
             return View(question);
         }
@@ -166,11 +165,13 @@ namespace PerfectPoliciesFE.Controllers
                 }
 
                 _apiRequest.Delete(questionController, id);
+                ViewBag.quizId = id;
 
                 return RedirectToAction(nameof(Index));
             }
             catch
             {
+                ViewBag.quizId = id;
                 return View();
             }
         }

@@ -4,6 +4,8 @@
     ViewData["Title"] = "Delete";
 
     var questionId = Context.Request.RouteValues.Where(c => c.Key == "id").FirstOrDefault().Value;
+
+    var quizId = ViewBag.quizId;
 }
 
 <h1>Delete</h1>
@@ -47,6 +49,6 @@
     
     <form asp-action="Delete">
         <input type="submit" value="Delete" class="btn btn-danger" /> |
-        @Html.ActionLink("Back To List", "OptionsByQuestionId", "Option", new { id = Model.QuestionId })
+        @Html.ActionLink("Back To List", "OptionsByQuestionId", "Option", new { id = Model.QuestionId, quizId = ViewBag.quizId })
     </form>
 </div>

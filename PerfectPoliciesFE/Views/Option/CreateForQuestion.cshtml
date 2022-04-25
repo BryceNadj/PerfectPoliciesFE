@@ -1,7 +1,11 @@
 ﻿@model PerfectPoliciesFE.Models.OptionModels.OptionCreate
 
 @{
-    ViewData["Title"] = "CreateForQuestion";var questionId = Context.Request.RouteValues.Where(c => c.Key == "id").FirstOrDefault().Value;
+    ViewData["Title"] = "CreateForQuestion";
+    
+    var questionId = Context.Request.RouteValues.Where(c => c.Key == "id").FirstOrDefault().Value;
+
+    var quizId = ViewBag.quizId;
 }
 
 <h1>CreateForQuestion</h1>
@@ -43,6 +47,6 @@
 </div>
 
 <div>
-    @Html.ActionLink("Back", "OptionsByQuestionId", "Option", new { id = Model.QuestionId })
+    @Html.ActionLink("Back", "OptionsByQuestionId", "Option", new { id = Model.QuestionId, quizId = ViewBag.quizId })
 </div>
 

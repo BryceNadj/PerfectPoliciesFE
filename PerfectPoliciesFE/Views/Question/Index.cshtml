@@ -60,7 +60,7 @@
                 @Html.DisplayFor(modelItem => item.QuizId)
             </td>
             <td>
-                @Html.ActionLink("Options", "OptionsByQuestionId", "Option", new { id = item.QuestionId }, new { @class = "btn btn-primary" })
+                @Html.ActionLink("Options", "OptionsByQuestionId", "Option", new { id = item.QuestionId, quizId = item.QuizId}, new { @class = "btn btn-primary" })
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new { id = item.QuestionId }) |
@@ -71,3 +71,6 @@
 }
     </tbody>
 </table>
+<div>
+    @Html.ActionLink("Back to Quizzes", "Index", "Quiz")
+</div>

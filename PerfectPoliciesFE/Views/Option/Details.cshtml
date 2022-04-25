@@ -4,6 +4,8 @@
     ViewData["Title"] = "Details";
 
     var questionId = Context.Request.RouteValues.Where(c => c.Key == "id").FirstOrDefault().Value;
+
+    var quizId = ViewBag.quizId;
 }
 
 <h1>Details</h1>
@@ -46,5 +48,5 @@
 </div>
 <div>
     @Html.ActionLink("Edit", "Edit", new { id = Model.OptionId }) |
-    @Html.ActionLink("Back To List", "OptionsByQuestionId", "Option", new { id = Model.QuestionId })
+    @Html.ActionLink("Back To List", "OptionsByQuestionId", "Option", new { id = Model.QuestionId, quizId = ViewBag.quizId })
 </div>
