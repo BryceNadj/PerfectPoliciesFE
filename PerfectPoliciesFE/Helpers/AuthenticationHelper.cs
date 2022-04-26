@@ -7,8 +7,7 @@ namespace PerfectPoliciesFE.Helpers
     {
         public static bool isAuthenticated(HttpContext context)
         {
-            //return context.Session.Keys.Any(c => c.Equals("Token"));
-            return true;
+            return context.Session.Keys.Any(c => c.Equals("Token"));
         }
     }
 }

@@ -66,7 +66,8 @@ namespace PerfectPoliciesFE
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseRouting();
-            // app.UseAuthorization();
+            app.UseAuthorization();
+            app.UseSession();
 
             app.UseEndpoints(endpoints =>
             {

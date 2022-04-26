@@ -6,8 +6,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using PerfectPoliciesFE.Helpers;
 using PerfectPoliciesFE.Services;
 using PerfectPoliciesFE.Models.QuizModels;
-using PerfectPoliciesFE.Models.QuestionModels;
-using System.Collections.Generic;
 
 namespace PerfectPoliciesFE.Controllers
 {
@@ -63,6 +61,14 @@ namespace PerfectPoliciesFE.Controllers
         // GET: QuizController/Create
         public ActionResult Create()
         {
+            if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
+            {
+                string[] routeValues = new string[2] { "Index", quizController };
+                InsertRouteValuesIntoViewBags(routeValues);
+
+                return RedirectToAction("Login", "Auth", new { routeValues = routeValues });
+            }
+
             return View();
         }
 
@@ -84,8 +90,6 @@ namespace PerfectPoliciesFE.Controllers
 
                 _apiRequest.Create(quizController, createdQuiz);
 
-                //QuizService.CreateNewQuiz(quiz);
-
                 return RedirectToAction("Index");
             }
             catch
@@ -99,7 +103,10 @@ namespace PerfectPoliciesFE.Controllers
         {
             if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
             {
-                return RedirectToAction("Login", "Auth");
+                string[] routeValues = new string[2] { "Index", quizController };
+                InsertRouteValuesIntoViewBags(routeValues);
+
+                return RedirectToAction("Login", "Auth", new { routeValues = routeValues });
             }
 
             Quiz quiz = _apiRequest.GetSingle(quizController, id);
@@ -116,7 +123,10 @@ namespace PerfectPoliciesFE.Controllers
             {
                 if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
                 {
-                    return RedirectToAction("Login", "Auth");
+                    string[] routeValues = new string[2] { "Index", quizController };
+                    InsertRouteValuesIntoViewBags(routeValues);
+
+                    return RedirectToAction("Login", "Auth", new { routeValues = routeValues });
                 }
 
                 _apiRequest.Edit(quizController, quiz, id);
@@ -134,7 +144,10 @@ namespace PerfectPoliciesFE.Controllers
         {
             if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
             {
-                return RedirectToAction("Login", "Auth");
+                string[] routeValues = new string[2] { "Index", quizController };
+                InsertRouteValuesIntoViewBags(routeValues);
+
+                return RedirectToAction("Login", "Auth", new { routeValues = routeValues });
             }
 
             Quiz quiz = _apiRequest.GetSingle(quizController, id);
@@ -149,10 +162,12 @@ namespace PerfectPoliciesFE.Controllers
         {
             try
             {
-
                 if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
                 {
-                    return RedirectToAction("Login", "Auth");
+                    string[] routeValues = new string[2] { "Index", quizController };
+                    InsertRouteValuesIntoViewBags(routeValues);
+
+                    return RedirectToAction("Login", "Auth", new { routeValues = routeValues });
                 }
 
                 _apiRequest.Delete(quizController, id);
@@ -174,5 +189,31 @@ namespace PerfectPoliciesFE.Controllers
 
             return View("Index", filterList);
         }
+
+        #region Extra Methods
+
+        private void InsertRouteValuesIntoViewBags(string[] routeValues)
+        {
+            if (routeValues[0] == "null")
+            /* Has to be "null" (if there is no action) because "" gets nulled automatically
+             *   in the method params, which moves routeValues[1] to routeValues[0] (kinda cringe)
+             * As long as I don't have an action called "null" this will be fine */
+            { ViewBag.Action = null; }
+            else
+            { ViewBag.Action = routeValues[0]; }
+
+            ViewBag.Controller = routeValues[1];
+
+            try
+            { ViewBag.QuizId = routeValues[2]; }
+            catch (Exception)
+            { /* QuizId is not required for the requested view */ }
+
+            try
+            { ViewBag.QuestionId = routeValues[3]; }
+            catch (Exception)
+            { /* QuestionId is not required for the requested view */ }
+        }
+        #endregion
     }
 }
