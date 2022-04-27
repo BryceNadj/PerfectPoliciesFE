@@ -159,12 +159,12 @@ namespace PerfectPoliciesFE.Controllers
                 _apiRequest.Edit(questionController, question, id);
                 ViewBag.quizId = question.QuizId;
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("QuestionsByQuizId", "Question", new { id = question.QuizId });
             }
             catch
             {
                 ViewBag.quizId = question.QuizId;
-                return View();
+                return RedirectToAction("QuestionsByQuizId", "Question", new { id = question.QuizId });
             }
         }
 
@@ -192,25 +192,27 @@ namespace PerfectPoliciesFE.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)
         {
+            Question question = _apiRequest.GetSingle(questionController, id);
             try
             {
                 if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
                 {
-                    string[] routeValues = new string[3] { "QuestionsByQuizId", questionController, id.ToString() };
+                    string[] routeValues = new string[3] { "QuestionsByQuizId", questionController, question.QuizId.ToString() };
                     InsertRouteValuesIntoViewBags(routeValues);
 
                     return RedirectToAction("Login", "Auth", new { routeValues = routeValues });
                 }
 
+
                 _apiRequest.Delete(questionController, id);
                 ViewBag.quizId = id;
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("QuestionsByQuizId", "Question", new { id = question.QuizId });
             }
             catch
             {
                 ViewBag.quizId = id;
-                return View();
+                return RedirectToAction("QuestionsByQuizId", "Question", new { id = question.QuizId });
             }
         }
 

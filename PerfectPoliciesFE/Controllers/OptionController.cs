@@ -69,6 +69,17 @@ namespace PerfectPoliciesFE.Controllers
             return View("Index", filteredOptionList);
         }
 
+        // GET: OptionController/Create
+        public ActionResult Create()
+        {
+            if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+
+            return View();
+        }
+
         public ActionResult CreateForQuestion(int id)
         {
             Question question = _apiQuestionRequest.GetSingle(questionController, id);
@@ -90,17 +101,6 @@ namespace PerfectPoliciesFE.Controllers
             ViewBag.quizId = question.QuizId;
 
             return View(option);
-        }
-
-        // GET: OptionController/Create
-        public ActionResult Create()
-        {
-            if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
-            {
-                return RedirectToAction("Login", "Auth");
-            }
-
-            return View();
         }
 
         // POST: OptionController/Create
