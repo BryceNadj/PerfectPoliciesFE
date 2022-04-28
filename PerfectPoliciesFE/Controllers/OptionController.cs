@@ -88,7 +88,7 @@ namespace PerfectPoliciesFE.Controllers
             {
 
                 string[] routeValues = new string[4] { "OptionsByQuestionId", optionController, id.ToString(), question.QuizId.ToString() };
-                InsertRouteValuesIntoViewBags(routeValues);
+                insertRouteValuesIntoViewBags(routeValues);
 
                 return RedirectToAction("Login", "Auth", new { routeValues = routeValues });
             }
@@ -142,7 +142,7 @@ namespace PerfectPoliciesFE.Controllers
             {
 
                 string[] routeValues = new string[4] { "OptionsByQuestionId", optionController, id.ToString(), question.QuizId.ToString() };
-                InsertRouteValuesIntoViewBags(routeValues);
+                insertRouteValuesIntoViewBags(routeValues);
 
                 return RedirectToAction("Login", "Auth", new { routeValues = routeValues });
             }
@@ -165,7 +165,7 @@ namespace PerfectPoliciesFE.Controllers
                 {
 
                     string[] routeValues = new string[4] { "OptionsByQuestionId", optionController, id.ToString(), question.QuizId.ToString() };
-                    InsertRouteValuesIntoViewBags(routeValues);
+                    insertRouteValuesIntoViewBags(routeValues);
 
                     return RedirectToAction("Login", "Auth", new { routeValues = routeValues });
                 }
@@ -192,7 +192,7 @@ namespace PerfectPoliciesFE.Controllers
             {
 
                 string[] routeValues = new string[4] { "OptionsByQuestionId", optionController, id.ToString(), question.QuizId.ToString() };
-                InsertRouteValuesIntoViewBags(routeValues);
+                insertRouteValuesIntoViewBags(routeValues);
 
                 return RedirectToAction("Login", "Auth", new { routeValues = routeValues });
             }
@@ -216,7 +216,7 @@ namespace PerfectPoliciesFE.Controllers
                 {
 
                     string[] routeValues = new string[4] { "OptionsByQuestionId", optionController, id.ToString(), question.QuizId.ToString() };
-                    InsertRouteValuesIntoViewBags(routeValues);
+                    insertRouteValuesIntoViewBags(routeValues);
 
                     return RedirectToAction("Login", "Auth", new { routeValues = routeValues });
                 }
@@ -235,7 +235,7 @@ namespace PerfectPoliciesFE.Controllers
 
         #region Extra Methods
 
-        private void InsertRouteValuesIntoViewBags(string[] routeValues)
+        private void insertRouteValuesIntoViewBags(string[] routeValues)
         {
             if (routeValues[0] == "null")
             /* Has to be "null" (if there is no action) because "" gets nulled automatically

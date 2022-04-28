@@ -47,6 +47,9 @@ namespace PerfectPoliciesFE.Controllers
 
             }
 
+            string[] routeValues = new string[] { "Index", quizController };
+            insertRouteValuesIntoViewBags(routeValues);
+
             return View(quizList);
         }
 
@@ -64,7 +67,7 @@ namespace PerfectPoliciesFE.Controllers
             if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
             {
                 string[] routeValues = new string[2] { "Index", quizController };
-                InsertRouteValuesIntoViewBags(routeValues);
+                insertRouteValuesIntoViewBags(routeValues);
 
                 return RedirectToAction("Login", "Auth", new { routeValues = routeValues });
             }
@@ -104,7 +107,7 @@ namespace PerfectPoliciesFE.Controllers
             if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
             {
                 string[] routeValues = new string[2] { "Index", quizController };
-                InsertRouteValuesIntoViewBags(routeValues);
+                insertRouteValuesIntoViewBags(routeValues);
 
                 return RedirectToAction("Login", "Auth", new { routeValues = routeValues });
             }
@@ -124,7 +127,7 @@ namespace PerfectPoliciesFE.Controllers
                 if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
                 {
                     string[] routeValues = new string[2] { "Index", quizController };
-                    InsertRouteValuesIntoViewBags(routeValues);
+                    insertRouteValuesIntoViewBags(routeValues);
 
                     return RedirectToAction("Login", "Auth", new { routeValues = routeValues });
                 }
@@ -145,7 +148,7 @@ namespace PerfectPoliciesFE.Controllers
             if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
             {
                 string[] routeValues = new string[2] { "Index", quizController };
-                InsertRouteValuesIntoViewBags(routeValues);
+                insertRouteValuesIntoViewBags(routeValues);
 
                 return RedirectToAction("Login", "Auth", new { routeValues = routeValues });
             }
@@ -165,7 +168,7 @@ namespace PerfectPoliciesFE.Controllers
                 if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
                 {
                     string[] routeValues = new string[2] { "Index", quizController };
-                    InsertRouteValuesIntoViewBags(routeValues);
+                    insertRouteValuesIntoViewBags(routeValues);
 
                     return RedirectToAction("Login", "Auth", new { routeValues = routeValues });
                 }
@@ -192,15 +195,9 @@ namespace PerfectPoliciesFE.Controllers
 
         #region Extra Methods
 
-        private void InsertRouteValuesIntoViewBags(string[] routeValues)
+        private void insertRouteValuesIntoViewBags(string[] routeValues)
         {
-            if (routeValues[0] == "null")
-            /* Has to be "null" (if there is no action) because "" gets nulled automatically
-             *   in the method params, which moves routeValues[1] to routeValues[0] (kinda cringe)
-             * As long as I don't have an action called "null" this will be fine */
-            { ViewBag.Action = null; }
-            else
-            { ViewBag.Action = routeValues[0]; }
+            ViewBag.Action = routeValues[0];
 
             ViewBag.Controller = routeValues[1];
 
@@ -213,6 +210,11 @@ namespace PerfectPoliciesFE.Controllers
             { ViewBag.QuestionId = routeValues[3]; }
             catch (Exception)
             { /* QuestionId is not required for the requested view */ }
+        }
+
+        private void insertRouteValuesIntoTempData(string[] routeValues)
+        {
+
         }
         #endregion
     }
