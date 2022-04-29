@@ -1,4 +1,4 @@
-﻿using System;
+﻿    using System;
 using System.Net.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
@@ -9,16 +9,10 @@ namespace PerfectPoliciesFE.Controllers
     public class AuthController : Controller
     {
         private static string[] RouteValues;
-        public IActionResult Login(string[] routeValues)
+        public IActionResult Login()
         {
-            RouteValues = routeValues;
-            try
-            { InsertRouteValuesIntoViewBags(routeValues); }
-            catch (Exception)
-            { /* There are no RouteValues */
-                ViewBag.Action = "Index";
-                ViewBag.Controller = "Home";
-            }
+            RouteValues = GetTempData();
+            // SetupTempData(routeValues);
             
             return View(); 
         }
@@ -51,57 +45,97 @@ namespace PerfectPoliciesFE.Controllers
                 }
             }
 
-            try
-            { return RedirectToAction(RouteValues[0], RouteValues[1], new { id = RouteValues[2] }); }
-            catch (Exception)
-            { /* Id is not required for the requested view */ }
-
-            try
-            { return RedirectToAction(RouteValues[0], RouteValues[1]); }
-            catch (Exception)
-            { return RedirectToAction("Index", "Home"); }
+            //RouteValues = GetTempData();
+            return Redirect();
         }
 
         public IActionResult Logout(string[] routeValues)
         {
             HttpContext.Session.Clear();
 
-            try
-            { return RedirectToAction(RouteValues[0], RouteValues[1], new { id = RouteValues[2] }); }
-            catch (Exception)
-            { /* Id is not required for the requested view */ }
-
-            try
-            { return RedirectToAction(RouteValues[0], RouteValues[1]); }
-            catch (Exception)
-            { return RedirectToAction("Index", "Home"); }
+            // RouteValues = GetTempData();
+            return Redirect();
         }
 
         #region Extra Methods
-
-        private void InsertRouteValuesIntoViewBags(string[] routeValues)
+        private IActionResult Redirect()
         {
-            if (routeValues[0] == "null")
-            // Has to be "null" (if there is no action) because "" gets nulled automatically in the method params, which moves routeValues[1] to routeValues[0] (kinda cringe)
-            // As long as I don't have an action called "null" this will be fine
+            if (TempData.Count.Equals(2)) // Action, Controller
             {
-                ViewBag.Action = null;
+                return RedirectToAction(
+                    TempData["Action"].ToString(), 
+                    TempData["Controller"].ToString());
             }
-            else
+            else if (TempData.Count.Equals(3)) // Action, Controller, QuizId
             {
-                ViewBag.Action = routeValues[0];
+                return RedirectToAction(
+                    TempData["Action"].ToString(),
+                    TempData["Controller"].ToString(), 
+                    new { id = TempData["QuizId"].ToString() });
+            }
+            else if (TempData.Count.Equals(4)) // Action, Controller, QuizId, QuestionId
+            {
+                return RedirectToAction(
+                    TempData["Action"].ToString(), 
+                    TempData["Controller"].ToString(), 
+                    new { quizId = TempData["QuizId"].ToString(), 
+                        id = TempData["QuestionId"].ToString() });
             }
 
-            ViewBag.Controller = routeValues[1];
+            return RedirectToAction("Index", "Home"); // Something happened so just go back to main front page
+        }
 
+        private void SetTempData(string[] routeValues)
+        {
+            TempData["Action"] = routeValues[0];
+            TempData["Controller"] = routeValues[1];
+            
             try
-            {
-                ViewBag.QuizId = routeValues[2];
-            }
+            { TempData["QuizId"] = routeValues[2]; }
             catch (Exception)
+            { /* Id is not required for the requested view */ }
+            
+            try
+            { TempData["QuestionId"] = routeValues[3]; }
+            catch (Exception)
+            { /* Id is not required for the requested view */ }
+
+            TempData.Keep();
+        }
+
+        private string[] GetTempData()
+        {
+            string[] routeValues;
+            if (TempData.Count.Equals(2))
             {
-                // Id is not required for the requested view
+                routeValues = new string[] {
+                    TempData["Action"].ToString(),
+                    TempData["Controller"].ToString()
+                };
             }
+            else if (TempData.Count.Equals(3))
+            { 
+                routeValues = new string[] {
+                    TempData["Action"].ToString(),
+                    TempData["Controller"].ToString(),
+                    TempData["QuizId"].ToString() 
+                };
+            }
+
+            else if (TempData.Count.Equals(4))
+            {
+                routeValues = new string[] {
+                    TempData["Action"].ToString(),
+                    TempData["Controller"].ToString(),
+                    TempData["QuizId"].ToString(),
+                    TempData["QuestionId"].ToString() 
+                };
+            }
+            else // Some kind of error happened
+            { return null; }
+            TempData.Keep();
+
+            return routeValues;
         }
         #endregion
     }

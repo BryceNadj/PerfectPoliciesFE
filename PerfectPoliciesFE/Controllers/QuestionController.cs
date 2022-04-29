@@ -7,6 +7,9 @@ using PerfectPoliciesFE.Services;
 using PerfectPoliciesFE.Models.QuizModels;
 using PerfectPoliciesFE.Models.QuestionModels;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
 
 namespace PerfectPoliciesFE.Controllers
 {
@@ -14,15 +17,18 @@ namespace PerfectPoliciesFE.Controllers
     {
         private readonly IApiRequest<Question> _apiRequest;
         private readonly IApiRequest<Quiz> _apiQuizRequest;
+        private IWebHostEnvironment _environment;
+
 
         private readonly string questionController = "Question";
-        private readonly string quizController = "Quiz";
+        // private readonly string quizController = "Quiz";
 
         // GET: QuestionController
-        public QuestionController(IApiRequest<Question> apiRequest, IApiRequest<Quiz> apiQuizRequest)
+        public QuestionController(IApiRequest<Question> apiRequest, IApiRequest<Quiz> apiQuizRequest, IWebHostEnvironment environment)
         {
             _apiRequest = apiRequest;
             _apiQuizRequest = apiQuizRequest;
+            _environment = environment;
         }
 
         // GET: QuestionController
@@ -39,22 +45,29 @@ namespace PerfectPoliciesFE.Controllers
             return View(questionList);
         }
 
+        // GET: QuestionController/QuestionsByQuizId/{quizId}
+        public ActionResult QuestionsByQuizId(int id)
+        {
+            List<Question> questions = _apiRequest.GetAll(questionController); 
+            var filteredList = questions.Where(c => c.QuizId.Equals(id)).ToList();
+
+            SetupTempData(new string[] { 
+                "QuestionsByQuizId", // Action
+                questionController,  // Controller
+                id.ToString() });    // QuizId
+
+            return View("Index", filteredList);
+        }
+
         // GET: QuestionController/Details/5
         public ActionResult Details(int id)
         {
             Question question = _apiRequest.GetSingle(questionController, id);
             ViewBag.quizId = question.QuizId;
 
+            SetupTempData(new string[] { "QuestionsByQuizId", questionController, question.QuizId.ToString() });
+
             return View(question);
-        }
-
-        // GET: OptionController/OptionsByQuestionId/{quizId}
-        public ActionResult QuestionsByQuizId(int id)
-        {
-            List<Question> questions = _apiRequest.GetAll(questionController); 
-            var filteredList = questions.Where(c => c.QuizId.Equals(id)).ToList();
-
-            return View("Index", filteredList);
         }
 
         // GET: QuestionController/Create
@@ -72,9 +85,7 @@ namespace PerfectPoliciesFE.Controllers
         {
             if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
             {
-
-                string[] routeValues = new string[3] { "QuestionsByQuizId", questionController, id.ToString() };
-                insertRouteValuesIntoViewBags(routeValues);
+                string[] routeValues = SetupRouteValues("QuestionsByQuizId", questionController, id);
 
                 return RedirectToAction("Login", "Auth", new { routeValues = routeValues });
             }
@@ -96,7 +107,9 @@ namespace PerfectPoliciesFE.Controllers
         {
             if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
             {
-                return RedirectToAction("Login", "Auth");
+                string[] routeValues = SetupRouteValues("QuestionsByQuizId", questionController, question.QuizId);
+
+                return RedirectToAction("Login", "Auth", new { routeValues = routeValues });
             }
 
             try
@@ -126,10 +139,7 @@ namespace PerfectPoliciesFE.Controllers
             Question question = _apiRequest.GetSingle(questionController, id);
             if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
             {
-                Quiz quiz = _apiQuizRequest.GetSingle(quizController, question.QuizId);
-
-                string[] routeValues = new string[3] { "QuestionsByQuizId", questionController, quiz.QuizId.ToString() };
-                insertRouteValuesIntoViewBags(routeValues);
+                string[] routeValues = SetupRouteValues("QuestionsByQuizId", questionController, question.QuizId);
 
                 return RedirectToAction("Login", "Auth", new { routeValues = routeValues });
             }
@@ -148,10 +158,9 @@ namespace PerfectPoliciesFE.Controllers
             {
                 if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
                 {
-                    Quiz quiz = _apiQuizRequest.GetSingle(quizController, question.QuizId);
+                    // Quiz quiz = _apiQuizRequest.GetSingle(quizController, question.QuizId);
 
-                    string[] routeValues = new string[3] { "QuestionsByQuizId", questionController, quiz.QuizId.ToString() };
-                    insertRouteValuesIntoViewBags(routeValues);
+                    string[] routeValues = SetupRouteValues("QuestionsByQuizId", questionController, question.QuizId);
 
                     return RedirectToAction("Login", "Auth", new { routeValues = routeValues });
                 }
@@ -174,10 +183,7 @@ namespace PerfectPoliciesFE.Controllers
             Question question = _apiRequest.GetSingle(questionController, id);
             if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
             {
-                Quiz quiz = _apiQuizRequest.GetSingle(quizController, question.QuizId);
-
-                string[] routeValues = new string[3] { "QuestionsByQuizId", questionController, quiz.QuizId.ToString() };
-                insertRouteValuesIntoViewBags(routeValues);
+                string[] routeValues = SetupRouteValues("QuestionsByQuizId", questionController, question.QuizId);
 
                 return RedirectToAction("Login", "Auth", new { routeValues = routeValues });
             }
@@ -197,8 +203,7 @@ namespace PerfectPoliciesFE.Controllers
             {
                 if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
                 {
-                    string[] routeValues = new string[3] { "QuestionsByQuizId", questionController, question.QuizId.ToString() };
-                    insertRouteValuesIntoViewBags(routeValues);
+                    string[] routeValues = SetupRouteValues("QuestionsByQuizId", questionController, question.QuizId);
 
                     return RedirectToAction("Login", "Auth", new { routeValues = routeValues });
                 }
@@ -216,29 +221,52 @@ namespace PerfectPoliciesFE.Controllers
             }
         }
 
-        #region Extra Methods
-
-        private void insertRouteValuesIntoViewBags(string[] routeValues)
+        [HttpPost]
+        public async Task<IActionResult> UploadFile(IFormFile file)
         {
-            if (routeValues[0] == "null")
-            /* Has to be "null" (if there is no action) because "" gets nulled automatically
-             *   in the method params, which moves routeValues[1] to routeValues[0] (kinda cringe)
-             * As long as I don't have an action called "null" this will be fine */
-            { ViewBag.Action = null; }
-            else
-            { ViewBag.Action = routeValues[0]; }
-
-            ViewBag.Controller = routeValues[1];
-
             try
-            { ViewBag.QuizId = routeValues[2]; }
-            catch (Exception)
-            { /* QuizId is not required for the requested view */ }
+            {
 
-            try
-            { ViewBag.QuestionId = routeValues[3]; }
-            catch (Exception)
-            { /* QuestionId is not required for the requested view */ }
+                // retrieve folder path
+                string folderRoot = Path.Combine(_environment.ContentRootPath, "wwwroot\\Uploads");
+
+                // combine filename and folderpath
+                string filePath = Path.Combine(folderRoot, file.FileName);
+
+                // save file
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+                return Ok(new { success = true, message = "File Upload" });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { success = false, message = e.Message });
+            }
+        }
+
+        #region Extra Methods
+        private void SetupTempData(string[] routeValues)
+        {
+            TempData.Clear();
+
+            TempData["Action"] = routeValues[0];
+            TempData["Controller"] = routeValues[1];
+            TempData["QuizId"] = routeValues[2];
+
+            TempData.Keep();
+        }
+
+        private string[] SetupRouteValues(string action, string controller, int quizId)
+        {
+            string[] routeValues = new string[] { 
+                action, 
+                controller, 
+                quizId.ToString() };
+            SetupTempData(routeValues);
+
+            return routeValues;
         }
         #endregion
     }
