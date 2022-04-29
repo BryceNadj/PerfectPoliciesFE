@@ -44,7 +44,7 @@ namespace PerfectPoliciesFE
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-            services.AddSingleton<IApiRequest<Quiz>, ApiRequest<Quiz>>();
+            services.AddScoped<IApiRequest<Quiz>, ApiRequest<Quiz>>();
             services.AddScoped<IApiRequest<Question>, ApiRequest<Question>>();
             services.AddScoped<IApiRequest<Option>, ApiRequest<Option>>();
         }
