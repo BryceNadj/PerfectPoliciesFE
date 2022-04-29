@@ -7,10 +7,14 @@
         @Html.Raw("<script> alert('" + ViewBag.Error.ToString() + "') </script>")
     }
 
-    string action = ViewBag.Action;
-    string controller = ViewBag.Controller;
-    var quizId = ViewBag.QuizId;
-}
+    string action = TempData["Action"].ToString();
+
+    string controller = TempData["Controller"].ToString();
+
+    var quizId = TempData["QuizId"];
+
+    var questionId = TempData["QuestionId"];
+    }
 
 <h1>Login</h1>
 
@@ -38,7 +42,7 @@
 </div>
 
 <div>
-    @Html.ActionLink("Back to List", @action, @controller, new { id = quizId })
+    @Html.ActionLink("Back to List", @action, @controller, new { id = @quizId, questionId = questionId })
 
 </div>
 

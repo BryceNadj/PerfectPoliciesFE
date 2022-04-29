@@ -47,6 +47,6 @@
 </div>
 
 <div>
-    @Html.ActionLink("Back", "OptionsByQuestionId", "Option", new { id = Model.QuestionId, quizId = ViewBag.quizId })
+    @Html.ActionLink("Back", "OptionsByQuestionId", "Option", new { id = Model.QuestionId, quizId = TempData["QuizId"] })
 </div>
 

@@ -48,16 +48,6 @@ namespace PerfectPoliciesFE.Controllers
             return View(optionList);
         }
 
-        // GET: OptionController/Details/5
-        public ActionResult Details(int id)
-        {
-            Option option = _apiRequest.GetSingle(optionController, id);
-            Question question = _apiQuestionRequest.GetSingle(questionController, option.QuestionId);
-            ViewBag.quizId = question.QuizId;
-
-            return View(option);
-        }
-
         // GET: OptionController/OptionsByQuestionId/{questionId}?quizId={quizId}
         public ActionResult OptionsByQuestionId(int id, int quizId)
         {
@@ -65,8 +55,26 @@ namespace PerfectPoliciesFE.Controllers
             var filteredOptionList = options.Where(c => c.QuestionId.Equals(id)).ToList();
 
             ViewBag.quizId = quizId;
+            SetupTempData(new string[] { 
+                "OptionsByQuestionId", // Action
+                optionController, // Controller
+                quizId.ToString(), // QuizId
+                id.ToString() // QuestionId
+            });      
 
             return View("Index", filteredOptionList);
+        }
+
+        // GET: OptionController/Details/5
+        public ActionResult Details(int id)
+        {
+            Option option = _apiRequest.GetSingle(optionController, id);
+            Question question = _apiQuestionRequest.GetSingle(questionController, option.QuestionId);
+            ViewBag.quizId = question.QuizId;
+
+            SetupTempData(new string[] { "OptionsByQuestionId", optionController, question.QuizId.ToString(), option.QuestionId.ToString() });
+
+            return View(option);
         }
 
         // GET: OptionController/Create
@@ -87,8 +95,7 @@ namespace PerfectPoliciesFE.Controllers
             if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
             {
 
-                string[] routeValues = new string[4] { "OptionsByQuestionId", optionController, id.ToString(), question.QuizId.ToString() };
-                insertRouteValuesIntoViewBags(routeValues);
+                string[] routeValues = SetupRouteValues("OptionsByQuestionId", optionController, question.QuizId, id);
 
                 return RedirectToAction("Login", "Auth", new { routeValues = routeValues });
             }
@@ -108,7 +115,14 @@ namespace PerfectPoliciesFE.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(OptionCreate option)
         {
-            
+            if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
+            {
+                Question question = _apiQuestionRequest.GetSingle(questionController, option.QuestionId);
+                string[] routeValues = SetupRouteValues("QuestionsByQuizId", optionController, question.QuizId, question.QuestionId);
+
+                return RedirectToAction("Login", "Auth", new { routeValues = routeValues });
+            }
+
             try
             {
                 Option createdOption = new Option()
@@ -124,7 +138,7 @@ namespace PerfectPoliciesFE.Controllers
 
                 _apiRequest.Create(optionController, createdOption);
 
-                return RedirectToAction("OptionsByQuestionId", "Option", new { id = option.QuestionId, quizId = ViewBag.quizId });
+                return RedirectToAction("OptionsByQuestionId", "Option", new { id = option.QuestionId, quizId = question.QuizId });
             }
             catch
             {
@@ -140,9 +154,7 @@ namespace PerfectPoliciesFE.Controllers
 
             if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
             {
-
-                string[] routeValues = new string[4] { "OptionsByQuestionId", optionController, id.ToString(), question.QuizId.ToString() };
-                insertRouteValuesIntoViewBags(routeValues);
+                string[] routeValues = SetupRouteValues("OptionsByQuestionId", optionController, question.QuizId, option.QuestionId);
 
                 return RedirectToAction("Login", "Auth", new { routeValues = routeValues });
             }
@@ -163,9 +175,7 @@ namespace PerfectPoliciesFE.Controllers
 
                 if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
                 {
-
-                    string[] routeValues = new string[4] { "OptionsByQuestionId", optionController, id.ToString(), question.QuizId.ToString() };
-                    insertRouteValuesIntoViewBags(routeValues);
+                    string[] routeValues = SetupRouteValues("OptionsByQuestionId", optionController, question.QuizId, option.QuestionId);
 
                     return RedirectToAction("Login", "Auth", new { routeValues = routeValues });
                 }
@@ -174,7 +184,7 @@ namespace PerfectPoliciesFE.Controllers
 
                 ViewBag.quizId = question.QuizId;
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("OptionsByQuestionId", "Option", new { id = option.QuestionId, quizId = question.QuizId });
             }
             catch
             {
@@ -190,9 +200,7 @@ namespace PerfectPoliciesFE.Controllers
 
             if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
             {
-
-                string[] routeValues = new string[4] { "OptionsByQuestionId", optionController, id.ToString(), question.QuizId.ToString() };
-                insertRouteValuesIntoViewBags(routeValues);
+                string[] routeValues = SetupRouteValues("OptionsByQuestionId", optionController, question.QuizId, option.QuestionId);
 
                 return RedirectToAction("Login", "Auth", new { routeValues = routeValues });
             }
@@ -214,9 +222,7 @@ namespace PerfectPoliciesFE.Controllers
 
                 if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
                 {
-
-                    string[] routeValues = new string[4] { "OptionsByQuestionId", optionController, id.ToString(), question.QuizId.ToString() };
-                    insertRouteValuesIntoViewBags(routeValues);
+                    string[] routeValues = SetupRouteValues("OptionsByQuestionId", optionController, question.QuizId, option.QuestionId);
 
                     return RedirectToAction("Login", "Auth", new { routeValues = routeValues });
                 }
@@ -234,28 +240,29 @@ namespace PerfectPoliciesFE.Controllers
         }
 
         #region Extra Methods
-
-        private void insertRouteValuesIntoViewBags(string[] routeValues)
+        private void SetupTempData(string[] routeValues)
         {
-            if (routeValues[0] == "null")
-            /* Has to be "null" (if there is no action) because "" gets nulled automatically
-             *   in the method params, which moves routeValues[1] to routeValues[0] (kinda cringe)
-             * As long as I don't have an action called "null" this will be fine */
-            { ViewBag.Action = null; }
-            else
-            { ViewBag.Action = routeValues[0]; }
+            TempData.Clear();
 
-            ViewBag.Controller = routeValues[1];
+            TempData["Action"] = routeValues[0];
+            TempData["Controller"] = routeValues[1];
+            TempData["QuizId"] = routeValues[2];
+            TempData["QuestionId"] = routeValues[3];
 
-            try
-            { ViewBag.QuizId = routeValues[2]; }
-            catch (Exception)
-            { /* QuizId is not required for the requested view */ }
+            TempData.Keep();
+        }
 
-            try
-            { ViewBag.QuestionId = routeValues[3]; }
-            catch (Exception)
-            { /* QuestionId is not required for the requested view */ }
+        private string[] SetupRouteValues(string action, string controller, int quizId, int questionId)
+        {
+            string[] routeValues = new string[] { 
+                action, 
+                controller, 
+                quizId.ToString(), 
+                questionId.ToString() };
+
+            SetupTempData(routeValues);
+
+            return routeValues;
         }
         #endregion
     }

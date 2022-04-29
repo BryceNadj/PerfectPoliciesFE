@@ -16,11 +16,13 @@ namespace PerfectPoliciesFE.Controllers
 
         public IActionResult Index()
         {
+            SetupTempData("Home", "Index");
             return View();
         }
 
         public IActionResult Privacy()
         {
+            SetupTempData("Home", "Privacy");
             return View();
         }
 
@@ -28,6 +30,13 @@ namespace PerfectPoliciesFE.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        private void SetupTempData(string action, string controller)
+        {
+            TempData.Clear();
+            TempData["Action"] = action;
+            TempData["Controller"] = controller;
         }
     }
 }

@@ -26,7 +26,7 @@ namespace PerfectPoliciesFE.Services
                 _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             }
 
-            /*
+            
             // if true, a token exists in the session
             if(_httpContext.Session.GetString("Token") != null)
             {
@@ -34,7 +34,7 @@ namespace PerfectPoliciesFE.Services
                 _client.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer", _httpContext.Session.GetString("Token"));
             }
-            */
+            
         }
         public List<T> GetAll(string controllerName)
         {
