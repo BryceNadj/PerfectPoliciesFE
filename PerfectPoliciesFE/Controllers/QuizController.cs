@@ -2,13 +2,10 @@
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Hosting;
 using PerfectPoliciesFE.Helpers;
 using PerfectPoliciesFE.Services;
 using PerfectPoliciesFE.Models.QuizModels;
-using Microsoft.AspNetCore.Hosting;
-using System.Threading.Tasks;
-using System.IO;
 
 namespace PerfectPoliciesFE.Controllers
 {

@@ -1,19 +1,14 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Http;
 using PerfectPoliciesFE.Services;
-using PerfectPoliciesFE.Models.QuestionModels;
 using PerfectPoliciesFE.Models.QuizModels;
 using PerfectPoliciesFE.Models.OptionModels;
+using PerfectPoliciesFE.Models.QuestionModels;
 
 namespace PerfectPoliciesFE
 {
