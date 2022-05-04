@@ -3,17 +3,44 @@ using System.Net.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using PerfectPoliciesFE.Models;
+using PerfectPoliciesFE.Services;
 
 namespace PerfectPoliciesFE.Controllers
 {
     public class AuthController : Controller
     {
-        private static string[] RouteValues;
+        private readonly IApiRequest<UserInfo> _apiRequest;
+
+        public AuthController(IApiRequest<UserInfo> apiRequest)
+        {
+            _apiRequest = apiRequest;
+        }
+
+        // GET: AuthController/Create
+        public ActionResult Create()
+        {
+            return View();
+        }
+
+        // POST: AuthController/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(UserInfo userInfo)
+        {
+            try
+            {
+                _apiRequest.Create("Auth", userInfo);
+
+                return Login(userInfo);
+            }
+            catch
+            {
+                return RedirectIActionResult();
+            }
+        }
+
         public IActionResult Login()
         {
-            RouteValues = GetTempData();
-            // SetupTempData(routeValues);
-            
             return View(); 
         }
 
@@ -32,7 +59,7 @@ namespace PerfectPoliciesFE.Controllers
                 {
                     // logged in
                     token = response.Content.ReadAsStringAsync().Result;
-
+                    
                     // Store the token in the session
                     HttpContext.Session.SetString("Token", token);
                 }
@@ -45,21 +72,20 @@ namespace PerfectPoliciesFE.Controllers
                 }
             }
 
-            //RouteValues = GetTempData();
-            return Redirect();
+            return RedirectIActionResult();
         }
 
-        public IActionResult Logout(string[] routeValues)
+        public IActionResult Logout()
         {
             HttpContext.Session.Clear();
 
-            // RouteValues = GetTempData();
-            return Redirect();
+            return RedirectIActionResult();
         }
 
         #region Extra Methods
-        private IActionResult Redirect()
+        private IActionResult RedirectIActionResult()
         {
+            TempData.Keep();
             if (TempData.Count.Equals(2)) // Action, Controller
             {
                 return RedirectToAction(
@@ -84,58 +110,33 @@ namespace PerfectPoliciesFE.Controllers
 
             return RedirectToAction("Index", "Home"); // Something happened so just go back to main front page
         }
-
-        private void SetTempData(string[] routeValues)
+        
+        private ActionResult RedirectActionResult()
         {
-            TempData["Action"] = routeValues[0];
-            TempData["Controller"] = routeValues[1];
-            
-            try
-            { TempData["QuizId"] = routeValues[2]; }
-            catch (Exception)
-            { /* Id is not required for the requested view */ }
-            
-            try
-            { TempData["QuestionId"] = routeValues[3]; }
-            catch (Exception)
-            { /* Id is not required for the requested view */ }
-
             TempData.Keep();
-        }
-
-        private string[] GetTempData()
-        {
-            string[] routeValues;
-            if (TempData.Count.Equals(2))
+            if (TempData.Count.Equals(2)) // Action, Controller
             {
-                routeValues = new string[] {
-                    TempData["Action"].ToString(),
-                    TempData["Controller"].ToString()
-                };
+                return RedirectToAction(
+                    TempData["Action"].ToString(), 
+                    TempData["Controller"].ToString());
             }
-            else if (TempData.Count.Equals(3))
-            { 
-                routeValues = new string[] {
-                    TempData["Action"].ToString(),
-                    TempData["Controller"].ToString(),
-                    TempData["QuizId"].ToString() 
-                };
-            }
-
-            else if (TempData.Count.Equals(4))
+            else if (TempData.Count.Equals(3)) // Action, Controller, QuizId
             {
-                routeValues = new string[] {
+                return RedirectToAction(
                     TempData["Action"].ToString(),
-                    TempData["Controller"].ToString(),
-                    TempData["QuizId"].ToString(),
-                    TempData["QuestionId"].ToString() 
-                };
+                    TempData["Controller"].ToString(), 
+                    new { id = TempData["QuizId"].ToString() });
             }
-            else // Some kind of error happened
-            { return null; }
-            TempData.Keep();
+            else if (TempData.Count.Equals(4)) // Action, Controller, QuizId, QuestionId
+            {
+                return RedirectToAction(
+                    TempData["Action"].ToString(), 
+                    TempData["Controller"].ToString(), 
+                    new { quizId = TempData["QuizId"].ToString(), 
+                        id = TempData["QuestionId"].ToString() });
+            }
 
-            return routeValues;
+            return RedirectToAction("Index", "Home"); // Something happened so just go back to main front page
         }
         #endregion
     }

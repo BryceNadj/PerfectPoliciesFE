@@ -12,7 +12,7 @@ namespace PerfectPoliciesFE.Controllers
     public class QuizController : Controller
     {
         private readonly IApiRequest<Quiz> _apiRequest;
-        private IWebHostEnvironment _environment;
+        private readonly IWebHostEnvironment _environment;
 
         private readonly string quizController = "Quiz";
 

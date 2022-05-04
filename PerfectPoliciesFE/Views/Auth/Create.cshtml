@@ -1,29 +1,22 @@
 ﻿@model PerfectPoliciesFE.Models.UserInfo
 
 @{
-    ViewData["Title"] = "Login";
+    ViewData["Title"] = "Create";
 
     TempData.Keep();
-    if (ViewBag.Error != null)
-    {
-        @Html.Raw("<script> alert('" + ViewBag.Error.ToString() + "') </script>") 
-    }
-
     string action = TempData["Action"].ToString();
     string controller = TempData["Controller"].ToString();
     var quizId = TempData["QuizId"];
     var questionId = TempData["QuestionId"];
-
-    TempData.Keep();
 }
 
-<h1>Login</h1>
+<h1>Create</h1>
 
 <h4>UserInfo</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Login">
+        <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Username" class="control-label"></label>
@@ -36,22 +29,13 @@
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Log In" class="btn btn-primary" />
+                <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    @Html.ActionLink("Create Account", "Create", "Auth", new { id = @quizId, questionId = questionId })
-    <br />
     @Html.ActionLink("Back to List", @action, @controller, new { id = @quizId, questionId = questionId })
-
 </div>
 
-@section Scripts
-{
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}

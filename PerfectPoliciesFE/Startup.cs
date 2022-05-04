@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PerfectPoliciesFE.Services;
+using PerfectPoliciesFE.Models;
 using PerfectPoliciesFE.Models.QuizModels;
 using PerfectPoliciesFE.Models.OptionModels;
 using PerfectPoliciesFE.Models.QuestionModels;
@@ -42,6 +43,7 @@ namespace PerfectPoliciesFE
             services.AddScoped<IApiRequest<Quiz>, ApiRequest<Quiz>>();
             services.AddScoped<IApiRequest<Question>, ApiRequest<Question>>();
             services.AddScoped<IApiRequest<Option>, ApiRequest<Option>>();
+            services.AddScoped<IApiRequest<UserInfo>, ApiRequest<UserInfo>>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

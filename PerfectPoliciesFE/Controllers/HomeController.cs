@@ -16,13 +16,13 @@ namespace PerfectPoliciesFE.Controllers
 
         public IActionResult Index()
         {
-            SetupTempData("Home", "Index");
+            SetupTempData("Index", "Home");
             return View();
         }
 
         public IActionResult Privacy()
         {
-            SetupTempData("Home", "Privacy");
+            SetupTempData("Privacy", "Home");
             return View();
         }
 
@@ -37,6 +37,7 @@ namespace PerfectPoliciesFE.Controllers
             TempData.Clear();
             TempData["Action"] = action;
             TempData["Controller"] = controller;
+            TempData.Keep();
         }
     }
 }
