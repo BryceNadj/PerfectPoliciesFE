@@ -221,30 +221,45 @@ namespace PerfectPoliciesFE.Controllers
             }
         }
 
+        /*
+        [BindProperty]
+        public IFormFile Image { get; set; }
+        public async Task OnPostAsync()
+        {
+            var file = Path.Combine(_environment.ContentRootPath, "wwwroot\\Uploads", Image.FileName);
+            using (var fileStream = new FileStream(file, FileMode.Create))
+            {
+                await Image.CopyToAsync(fileStream);
+            }
+        }
+        */
+
+        
         [HttpPost]
         public async Task<IActionResult> UploadFile(IFormFile file)
         {
+            // Retrieve folder path
+            string folderRoot = Path.Combine(_environment.ContentRootPath, "wwwroot\\Uploads");
+
+            // Combine filename and folder path
+            string filePath = Path.Combine(folderRoot, file.FileName);
+
             try
             {
-
-                // retrieve folder path
-                string folderRoot = Path.Combine(_environment.ContentRootPath, "wwwroot\\Uploads");
-
-                // combine filename and folderpath
-                string filePath = Path.Combine(folderRoot, file.FileName);
-
-                // save file
+                // Save the file
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     await file.CopyToAsync(stream);
                 }
-                return Ok(new { success = true, message = "File Upload" });
+
+                return Ok(new { success = true, message = "File Uploaded" });
             }
             catch (Exception e)
             {
                 return BadRequest(new { success = false, message = e.Message });
             }
         }
+        
 
         #region Extra Methods
         private void SetupTempData(string[] routeValues)

@@ -24,17 +24,11 @@
             </div>
             <div class="form-group">
                 <label asp-for="Image" class="control-label"></label>
-                <input asp-for="Image" class="form-control" />
+                <input asp-for="Image" class="form-control" readonly/>
                 <span asp-validation-for="Image" class="text-danger"></span>
             </div>
-            @*
-                <div class="form-group">
-                    <label asp-for="QuizId" class="control-label"></label>
-                    <input asp-for="QuizId" class="form-control" />
-                    <span asp-validation-for="QuizId" class="text-danger"></span>
-                </div>
-            *@
             @Html.HiddenFor(c => c.QuizId)
+            @Html.HiddenFor(c => c.Image)
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
@@ -43,9 +37,12 @@
 </div>
 
 <div class="row">
-    @using (Html.BeginForm("UploadFile", "Quiz", FormMethod.Post, new { @class = "dropzone", @id = "dropzone-form" }))
+    @using (Html.BeginForm("UploadFile", "Question", FormMethod.Post, new { @class = "dropzone", @id = "dropzone-form", enctype = "multipart/form-data" }))
     {
-
+        <div class="fallback">
+            @Html.TextBoxFor(m => m.Image, new { type = "file" })
+            <input type="submit" />
+        </div>
     }
 </div>
 
@@ -53,23 +50,22 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+    }
 
 <script type="text/javascript">
     Dropzone.options.dropzoneForm = {
         maxFiles: 1,
         acceptedFiles: "image/*",
         success: function (file, response) {
-            $("#Phone").val(file.upload.filename)
+            $("#Image").val(file.upload.filename)
             console.log("Filename: " + file.upload.filename);
             file.previewElement.classList.add("dz-success");
         },
-        error: function(file, message) {
+        error: function (file, message) {
             alert(message);
         }
     }
 </script>
-
 
 <div>
     @Html.ActionLink("Back To List", "QuestionsByQuizId", "Question", new { id = Model.QuizId })

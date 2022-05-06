@@ -40,21 +40,6 @@
     </div>
 </div>
 
-<div class="row">
-    @using (Html.BeginForm("UploadFile", "Quiz", FormMethod.Post, new { @class = "dropzone", @id = "dropzone-form" }))
-    {
-
-    }
-</div>
-
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
-
-<script src="~/lib/dropzone/min/dropzone.min.js"></script>
-
-@section Scripts {
-@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
-
-<script
