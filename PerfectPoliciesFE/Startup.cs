@@ -10,6 +10,7 @@ using PerfectPoliciesFE.Models;
 using PerfectPoliciesFE.Models.QuizModels;
 using PerfectPoliciesFE.Models.OptionModels;
 using PerfectPoliciesFE.Models.QuestionModels;
+using System.Net.Http.Headers;
 
 namespace PerfectPoliciesFE
 {
@@ -26,6 +27,14 @@ namespace PerfectPoliciesFE
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+            // Set up a central configuration for the HttpClient
+            services.AddHttpClient("ApiClient", c =>
+            {
+                c.BaseAddress = new Uri(Configuration["ApiUrl"]);
+                c.DefaultRequestHeaders.Clear();
+                c.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            });
 
             // create an in memory Database for storing session content
             services.AddDistributedMemoryCache();
