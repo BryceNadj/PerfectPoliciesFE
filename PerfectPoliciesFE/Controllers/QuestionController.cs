@@ -46,6 +46,11 @@ namespace PerfectPoliciesFE.Controllers
         }
 
         // GET: QuestionController/QuestionsByQuizId/{quizId}
+        /// <summary>
+        /// Gets a list of questions where the QuizId is equal the the Id passed in.
+        /// </summary>
+        /// <param name="id">The Id of the quiz from which respective questions are returned.</param>
+        /// <returns>A list of questions.</returns>
         public ActionResult QuestionsByQuizId(int id)
         {
             List<Question> questions = _apiRequest.GetAll(questionController); 
@@ -220,21 +225,31 @@ namespace PerfectPoliciesFE.Controllers
                 return RedirectToAction("QuestionsByQuizId", "Question", new { id = question.QuizId });
             }
         }
-
-        /*
-        [BindProperty]
-        public IFormFile Image { get; set; }
-        public async Task OnPostAsync()
-        {
-            var file = Path.Combine(_environment.ContentRootPath, "wwwroot\\Uploads", Image.FileName);
-            using (var fileStream = new FileStream(file, FileMode.Create))
-            {
-                await Image.CopyToAsync(fileStream);
-            }
-        }
-        */
-
         
+
+        #region Extra Methods
+        private void SetupTempData(string[] routeValues)
+        {
+            TempData.Clear();
+
+            TempData["Action"] = routeValues[0];
+            TempData["Controller"] = routeValues[1];
+            TempData["QuizId"] = routeValues[2];
+
+            TempData.Keep();
+        }
+
+        private string[] SetupRouteValues(string action, string controller, int quizId)
+        {
+            string[] routeValues = new string[] { 
+                action, 
+                controller, 
+                quizId.ToString() };
+            SetupTempData(routeValues);
+
+            return routeValues;
+        }
+
         [HttpPost]
         public async Task<IActionResult> UploadFile(IFormFile file)
         {
@@ -260,29 +275,6 @@ namespace PerfectPoliciesFE.Controllers
             }
         }
         
-
-        #region Extra Methods
-        private void SetupTempData(string[] routeValues)
-        {
-            TempData.Clear();
-
-            TempData["Action"] = routeValues[0];
-            TempData["Controller"] = routeValues[1];
-            TempData["QuizId"] = routeValues[2];
-
-            TempData.Keep();
-        }
-
-        private string[] SetupRouteValues(string action, string controller, int quizId)
-        {
-            string[] routeValues = new string[] { 
-                action, 
-                controller, 
-                quizId.ToString() };
-            SetupTempData(routeValues);
-
-            return routeValues;
-        }
         #endregion
     }
 }
