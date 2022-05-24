@@ -9,10 +9,12 @@ namespace PerfectPoliciesFE.Controllers
 {
     public class AuthController : Controller
     {
+        HttpClient _client;
         private readonly IApiRequest<UserInfo> _apiRequest;
 
-        public AuthController(IApiRequest<UserInfo> apiRequest)
+        public AuthController(IHttpClientFactory factory, IApiRequest<UserInfo> apiRequest)
         {
+            _client = factory.CreateClient("ApiClient");
             _apiRequest = apiRequest;
         }
 
@@ -41,7 +43,7 @@ namespace PerfectPoliciesFE.Controllers
 
         public IActionResult Login()
         {
-            return View(); 
+            return View();
         }
 
         [HttpPost]
@@ -49,6 +51,7 @@ namespace PerfectPoliciesFE.Controllers
         {
             string token = "";
 
+            // var response = _client.PostAsJsonAsync("Auth/GenerateToken", user).Result;
             using (HttpClient client = new HttpClient())
             {
                 client.BaseAddress = new Uri("https://localhost:44363/api/");
@@ -59,7 +62,7 @@ namespace PerfectPoliciesFE.Controllers
                 {
                     // logged in
                     token = response.Content.ReadAsStringAsync().Result;
-                    
+
                     // Store the token in the session
                     HttpContext.Session.SetString("Token", token);
                 }
@@ -89,50 +92,52 @@ namespace PerfectPoliciesFE.Controllers
             if (TempData.Count.Equals(2)) // Action, Controller
             {
                 return RedirectToAction(
-                    TempData["Action"].ToString(), 
+                    TempData["Action"].ToString(),
                     TempData["Controller"].ToString());
             }
             else if (TempData.Count.Equals(3)) // Action, Controller, QuizId
             {
                 return RedirectToAction(
                     TempData["Action"].ToString(),
-                    TempData["Controller"].ToString(), 
+                    TempData["Controller"].ToString(),
                     new { id = TempData["QuizId"].ToString() });
             }
             else if (TempData.Count.Equals(4)) // Action, Controller, QuizId, QuestionId
             {
                 return RedirectToAction(
-                    TempData["Action"].ToString(), 
-                    TempData["Controller"].ToString(), 
-                    new { quizId = TempData["QuizId"].ToString(), 
+                    TempData["Action"].ToString(),
+                    TempData["Controller"].ToString(),
+                    new
+                    { quizId = TempData["QuizId"].ToString(),
                         id = TempData["QuestionId"].ToString() });
             }
 
             return RedirectToAction("Index", "Home"); // Something happened so just go back to main front page
         }
-        
+
         private ActionResult RedirectActionResult()
         {
             TempData.Keep();
             if (TempData.Count.Equals(2)) // Action, Controller
             {
                 return RedirectToAction(
-                    TempData["Action"].ToString(), 
+                    TempData["Action"].ToString(),
                     TempData["Controller"].ToString());
             }
             else if (TempData.Count.Equals(3)) // Action, Controller, QuizId
             {
                 return RedirectToAction(
                     TempData["Action"].ToString(),
-                    TempData["Controller"].ToString(), 
+                    TempData["Controller"].ToString(),
                     new { id = TempData["QuizId"].ToString() });
             }
             else if (TempData.Count.Equals(4)) // Action, Controller, QuizId, QuestionId
             {
                 return RedirectToAction(
-                    TempData["Action"].ToString(), 
-                    TempData["Controller"].ToString(), 
-                    new { quizId = TempData["QuizId"].ToString(), 
+                    TempData["Action"].ToString(),
+                    TempData["Controller"].ToString(),
+                    new
+                    { quizId = TempData["QuizId"].ToString(),
                         id = TempData["QuestionId"].ToString() });
             }
 
