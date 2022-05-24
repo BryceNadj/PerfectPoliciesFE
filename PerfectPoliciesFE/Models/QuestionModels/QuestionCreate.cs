@@ -1,15 +1,18 @@
-﻿namespace PerfectPoliciesFE.Models.QuestionModels
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace PerfectPoliciesFE.Models.QuestionModels
 {
     public class QuestionCreate
     {
         // Attributes
         public string Topic { get; set; }
+
+        [Display(Name = "Question Text")]
         public string QuestionText { get; set; }
 
-        #nullable enable
         public string? Image { get; set; }
-        #nullable disable
 
+        [Display(Name = "Quiz Id")]
         public int QuizId { get; set; }
     }
 }
