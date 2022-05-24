@@ -25,6 +25,12 @@ namespace PerfectPoliciesFE.Controllers
             SetupTempData("Privacy", "Home");
             return View();
         }
+        
+        public IActionResult Help()
+        {
+            SetupTempData("Help", "Home");
+            return View();
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
