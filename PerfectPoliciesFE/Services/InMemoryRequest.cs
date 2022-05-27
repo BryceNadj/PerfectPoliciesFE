@@ -16,7 +16,7 @@ namespace PerfectPoliciesFE.Services
         public InMemoryRequest(TestDatabase db, IHttpContextAccessor accessor)
         {
             _db = db;
-            // accessor.HttpContext.Session.SetString("Token", "TestingToken");
+            accessor.HttpContext.Session.SetString("Token", "TestingToken"); // Bypass log in
         }
 
         public List<T> GetAll(string controllerName)
