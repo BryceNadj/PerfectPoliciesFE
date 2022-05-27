@@ -18,6 +18,7 @@ namespace PerfectPoliciesFE.Models.QuizModels
         
         [Display(Name = "Date Created")]
         public DateTime? DateCreated { get; set; }
+
         [Display(Name = "Passing Grade")]
         public int PassingGrade { get; set; }
 
