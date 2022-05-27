@@ -1,4 +1,5 @@
-﻿using PerfectPoliciesFE.Models.OptionModels;
+﻿using PerfectPoliciesFE.Models;
+using PerfectPoliciesFE.Models.OptionModels;
 using PerfectPoliciesFE.Models.QuestionModels;
 using PerfectPoliciesFE.Models.QuizModels;
 using System;
@@ -40,6 +41,14 @@ namespace PerfectPoliciesFE.Helpers
                 new Option { OptionId = 5, OptionText = "Orange", Order = "B", IsCorrect = true, QuestionId = 2 },
                 new Option { OptionId = 6, OptionText = "Pineapple", Order = "C", IsCorrect = false, QuestionId = 2 },
                 new Option { OptionId = 7, OptionText = "I don't know", Order = "D", IsCorrect = false, QuestionId = 2 }
+            };
+        }
+
+        public static List<UserInfo> GenerateUsers()
+        {
+            return new List<UserInfo> 
+            { 
+                new UserInfo { Username = "a", Password = "a" }
             };
         }
     }
