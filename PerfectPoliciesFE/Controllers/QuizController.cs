@@ -48,14 +48,6 @@ namespace PerfectPoliciesFE.Controllers
             return View(quizList);
         }
 
-        // GET: QuizController/Details/5
-        public ActionResult Details(int id)
-        {
-            Quiz quiz = _apiRequest.GetSingle(quizController, id);
-
-            return View(quiz);
-        }
-
         // GET: QuizController/Create
         public ActionResult Create()
         {
@@ -76,6 +68,14 @@ namespace PerfectPoliciesFE.Controllers
         {
             try
             {
+                if (quiz.Title == null || 
+                    quiz.Topic == null || 
+                    quiz.Author == null)
+                {
+                    ViewBag.Error = "The Topic, Author or Passing Grade field/s were empty. The must be filled in.";
+                    return View();
+                }
+
                 Quiz createdQuiz = new Quiz()
                 {
                     Title = quiz.Title,
@@ -84,7 +84,7 @@ namespace PerfectPoliciesFE.Controllers
                     DateCreated = DateTime.Now,
                     PassingGrade = quiz.PassingGrade
                 };
-
+                
                 _apiRequest.Create(quizController, createdQuiz);
 
                 return RedirectToAction("Index");
@@ -93,6 +93,14 @@ namespace PerfectPoliciesFE.Controllers
             {
                 return View();
             }
+        }
+
+        // GET: QuizController/Details/5
+        public ActionResult Details(int id)
+        {
+            Quiz quiz = _apiRequest.GetSingle(quizController, id);
+
+            return View(quiz);
         }
 
         // GET: QuizController/Edit/5
