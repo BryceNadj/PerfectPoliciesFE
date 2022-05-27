@@ -110,14 +110,11 @@ namespace PerfectPoliciesFE.Controllers
         }
 
         // GET: QuizController/Details/5
-<<<<<<< HEAD
         /// <summary>
         /// Gets details of a quiz
         /// </summary>
         /// <param name="id">Id of the quiz to get details for</param>
         /// <returns>The details page for a quiz</returns>
-=======
->>>>>>> d9aec12de57858ab2b0ff1f4850fdc05b75c2b45
         public ActionResult Details(int id)
         {
             Quiz quiz = _apiRequest.GetSingle(quizController, id);
