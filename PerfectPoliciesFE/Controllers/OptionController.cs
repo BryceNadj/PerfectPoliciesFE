@@ -33,11 +33,8 @@ namespace PerfectPoliciesFE.Controllers
         /// <returns>The option view</returns>
         public ActionResult OptionsByQuestionId(int id, int quizId)
         {
-#if TEST
-            List<Option> options = _apiRequest.GetAllForEndpoint("OptionsByQuestionId");
-#else
             List<Option> options = _apiRequest.GetAll(optionController); 
-#endif
+
             var filteredOptionList = options.Where(c => c.QuestionId.Equals(id)).ToList();
 
             ViewBag.quizId = quizId;
