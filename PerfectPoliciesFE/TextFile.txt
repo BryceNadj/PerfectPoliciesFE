@@ -5,4 +5,4 @@
 	@HttpContextAccessor.HttpContext.Session.GetString("Session String Name");
 
 IN CONTROLLER
-	
+	HttpContext.Session.SetString("Key", "Value");
