@@ -33,7 +33,11 @@ namespace PerfectPoliciesFE.Controllers
         /// <returns>The option view</returns>
         public ActionResult OptionsByQuestionId(int id, int quizId)
         {
+#if TEST
+            List<Option> options = _apiRequest.GetAllForEndpoint("OptionsByQuestionId");
+#else
             List<Option> options = _apiRequest.GetAll(optionController); 
+#endif
             var filteredOptionList = options.Where(c => c.QuestionId.Equals(id)).ToList();
 
             ViewBag.quizId = quizId;
@@ -246,12 +250,16 @@ namespace PerfectPoliciesFE.Controllers
             }
         }
 
+<<<<<<< HEAD
         #region Extra Methods
 
         /// <summary>
         /// Places the values passed in through the routeValues param into TempData so any view can redirect to the right action if it needs to
         /// </summary>
         /// <param name="routeValues">The string[] containing the route values</param>
+=======
+#region Extra Methods
+>>>>>>> d9aec12de57858ab2b0ff1f4850fdc05b75c2b45
         private void SetupTempData(string[] routeValues)
         {
             TempData.Clear();
@@ -283,6 +291,6 @@ namespace PerfectPoliciesFE.Controllers
 
             return routeValues;
         }
-        #endregion
+#endregion
     }
 }

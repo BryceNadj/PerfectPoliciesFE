@@ -3,11 +3,21 @@
 @{
     ViewData["Title"] = "Create";
 
+    string action = "Index";
+    string controller = "Home";
+    string quizId = null;
+    string questionId = null;
+
+    try
+    {
+        action = TempData["Action"].ToString();
+        controller = TempData["Controller"].ToString();
+        quizId = TempData["QuizId"].ToString();
+        questionId = TempData["QuestionId"].ToString();
+    }
+    catch (Exception) { }
+
     TempData.Keep();
-    string action = TempData["Action"].ToString();
-    string controller = TempData["Controller"].ToString();
-    var quizId = TempData["QuizId"];
-    var questionId = TempData["QuestionId"];
 }
 
 <h1>Create</h1>

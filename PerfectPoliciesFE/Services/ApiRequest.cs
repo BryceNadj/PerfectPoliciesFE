@@ -34,8 +34,8 @@ namespace PerfectPoliciesFE.Services
                 _client.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer", _httpContext.Session.GetString("Token"));
             }
-            
         }
+            
         public List<T> GetAll(string controllerName)
         {
             HttpResponseMessage response = _client.GetAsync(controllerName).Result;
@@ -75,7 +75,6 @@ namespace PerfectPoliciesFE.Services
             var responseEntity = response.Content.ReadAsAsync<T>().Result;
 
             return responseEntity;
-
         }
 
         /// <summary>
@@ -92,6 +91,16 @@ namespace PerfectPoliciesFE.Services
             var responseEntities = response.Content.ReadAsAsync<List<T>>().Result;
 
             return responseEntities;
+        }
+
+        public List<T> GetAllForEndpoint(string endpoint)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<T> GetSingleForEndpoint(string endpoint)
+        {
+            throw new NotImplementedException();
         }
     }
 }

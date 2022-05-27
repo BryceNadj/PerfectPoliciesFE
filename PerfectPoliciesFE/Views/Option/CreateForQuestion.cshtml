@@ -2,10 +2,16 @@
 
 @{
     ViewData["Title"] = "CreateForQuestion";
-    
+
+    @using Microsoft.AspNetCore.Http;
+    @inject IHttpContextAccessor HttpContextAccessor
+
+    @HttpContextAccessor.HttpContext.Session.GetString("userName");
+
     var questionId = Context.Request.RouteValues.Where(c => c.Key == "id").FirstOrDefault().Value;
 
     var quizId = ViewBag.quizId;
+
 }
 
 <h1>CreateForQuestion</h1>
@@ -32,11 +38,11 @@
                 </label>
             </div>
             @*
-        <div class="form-group">
-            <label asp-for="QuestionId" class="control-label"></label>
-            <input asp-for="QuestionId" class="form-control" readonly />
-            <span asp-validation-for="QuestionId" class="text-danger"></span>
-        </div>
+                <div class="form-group">
+                    <label asp-for="QuestionId" class="control-label"></label>
+                    <input asp-for="QuestionId" class="form-control" readonly />
+                    <span asp-validation-for="QuestionId" class="text-danger"></span>
+                </div>
             *@
             @Html.HiddenFor(c => c.QuestionId)
             <div class="form-group">

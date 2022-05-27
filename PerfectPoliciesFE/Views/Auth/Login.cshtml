@@ -9,13 +9,21 @@
         @Html.Raw("<script> alert('" + ViewBag.Error.ToString() + "') </script>") 
     }
 
-    string action = TempData["Action"].ToString();
-    string controller = TempData["Controller"].ToString();
-    var quizId = TempData["QuizId"];
-    var questionId = TempData["QuestionId"];
+    string action = "Index";
+    string controller = "Home";
+    string quizId = null;
+    string questionId = null;
+
+    try
+    {
+        action = TempData["Action"].ToString();
+        controller = TempData["Controller"].ToString();
+        quizId = TempData["QuizId"].ToString();
+        questionId = TempData["QuestionId"].ToString();
+    } catch(Exception) { }
 
     TempData.Keep();
-}
+    }
 
 <h1>Login</h1>
 

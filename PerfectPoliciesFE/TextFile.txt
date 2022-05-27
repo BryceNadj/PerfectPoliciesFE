@@ -1,0 +1,8 @@
+﻿IN VIEW
+	@using Microsoft.AspNetCore.Http;
+	@inject IHttpContextAccessor HttpContextAccessor
+
+	@HttpContextAccessor.HttpContext.Session.GetString("Session String Name");
+
+IN CONTROLLER
+	

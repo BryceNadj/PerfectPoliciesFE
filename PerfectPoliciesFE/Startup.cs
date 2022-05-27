@@ -49,10 +49,18 @@ namespace PerfectPoliciesFE
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
+#if TEST
+            services.AddSingleton<TestDatabase>();
+            services.AddScoped<IApiRequest<Quiz>, InMemoryRequest<Quiz>>();
+            services.AddScoped<IApiRequest<Question>, InMemoryRequest<Question>>();
+            services.AddScoped<IApiRequest<Option>, InMemoryRequest<Option>>();
+            services.AddScoped<IApiRequest<UserInfo>, InMemoryRequest<UserInfo>>();
+#else
             services.AddScoped<IApiRequest<Quiz>, ApiRequest<Quiz>>();
             services.AddScoped<IApiRequest<Question>, ApiRequest<Question>>();
             services.AddScoped<IApiRequest<Option>, ApiRequest<Option>>();
             services.AddScoped<IApiRequest<UserInfo>, ApiRequest<UserInfo>>();
+#endif
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
