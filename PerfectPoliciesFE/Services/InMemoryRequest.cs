@@ -16,7 +16,7 @@ namespace PerfectPoliciesFE.Services
         public InMemoryRequest(TestDatabase db, IHttpContextAccessor accessor)
         {
             _db = db;
-            accessor.HttpContext.Session.SetString("Token", "TestingToken");
+            // accessor.HttpContext.Session.SetString("Token", "TestingToken");
         }
 
         public List<T> GetAll(string controllerName)
@@ -36,9 +36,9 @@ namespace PerfectPoliciesFE.Services
                 case nameof(Option):
                     foreach (var option in _db.Options)
                     {
-                        option.Question = _db.Questions.Where(c => c.QuizId == option.QuestionId).FirstOrDefault();
+                        option.Question = _db.Questions.Where(c => c.QuestionId == option.QuestionId).FirstOrDefault();
                     }
-                    return _db.Questions as List<T>;
+                    return _db.Options as List<T>;
 
 
 
