@@ -3,11 +3,6 @@
 @{
     ViewData["Title"] = "CreateForQuestion";
 
-    @using Microsoft.AspNetCore.Http;
-    @inject IHttpContextAccessor HttpContextAccessor
-
-    @HttpContextAccessor.HttpContext.Session.GetString("userName");
-
     var questionId = Context.Request.RouteValues.Where(c => c.Key == "id").FirstOrDefault().Value;
 
     var quizId = ViewBag.quizId;
@@ -53,6 +48,6 @@
 </div>
 
 <div>
-    @Html.ActionLink("Back", "OptionsByQuestionId", "Option", new { id = Model.QuestionId, quizId = TempData["QuizId"] })
+    @Html.ActionLink("Back", "OptionsByQuestionId", "Option", new { id = Model.QuestionId, quizId = quizId })
 </div>
 

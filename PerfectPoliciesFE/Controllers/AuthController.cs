@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using PerfectPoliciesFE.Models;
 using PerfectPoliciesFE.Services;
+using PerfectPoliciesFE.Helpers;
 
 namespace PerfectPoliciesFE.Controllers
 {
@@ -11,11 +12,13 @@ namespace PerfectPoliciesFE.Controllers
     {
         HttpClient _client;
         private readonly IApiRequest<UserInfo> _apiRequest;
+        private readonly RouteValuesHelper _routeValuesHelper;
 
-        public AuthController(IHttpClientFactory factory, IApiRequest<UserInfo> apiRequest)
+        public AuthController(IHttpClientFactory factory, IApiRequest<UserInfo> apiRequest, RouteValuesHelper routeValuesHelper)
         {
             _client = factory.CreateClient("ApiClient");
             _apiRequest = apiRequest;
+            _routeValuesHelper = routeValuesHelper;
         }
 
         // GET: AuthController/Create
@@ -99,63 +102,34 @@ namespace PerfectPoliciesFE.Controllers
         }
 
         #region Extra Methods
+
         private IActionResult RedirectIActionResult()
         {
-            TempData.Keep();
-            if (TempData.Count.Equals(2)) // Action, Controller
+            string action;
+            string controller;
+            string quizId;
+            string questionId;
+
+            action = HttpContext.Session.GetString("Action");
+            controller = HttpContext.Session.GetString("Controller");
+
+            if (HttpContext.Session.GetString("QuestionId") != null)
             {
-                return RedirectToAction(
-                    TempData["Action"].ToString(),
-                    TempData["Controller"].ToString());
+                quizId = HttpContext.Session.GetString("QuizId");
+                questionId = HttpContext.Session.GetString("QuestionId");
+
+                return RedirectToAction(action, controller, new { quizId = quizId, id = questionId });
             }
-            else if (TempData.Count.Equals(3)) // Action, Controller, QuizId
+            else if (HttpContext.Session.GetString("QuizId") != null)
             {
-                return RedirectToAction(
-                    TempData["Action"].ToString(),
-                    TempData["Controller"].ToString(),
-                    new { id = TempData["QuizId"].ToString() });
-            }
-            else if (TempData.Count.Equals(4)) // Action, Controller, QuizId, QuestionId
-            {
-                return RedirectToAction(
-                    TempData["Action"].ToString(),
-                    TempData["Controller"].ToString(),
-                    new
-                    { quizId = TempData["QuizId"].ToString(),
-                        id = TempData["QuestionId"].ToString() });
+                quizId = HttpContext.Session.GetString("QuizId");
+
+                return RedirectToAction(action, controller, new { id = quizId });
             }
 
-            return RedirectToAction("Index", "Home"); // Something happened so just go back to main front page
+            return RedirectToAction(action, controller);
         }
 
-        private ActionResult RedirectActionResult()
-        {
-            TempData.Keep();
-            if (TempData.Count.Equals(2)) // Action, Controller
-            {
-                return RedirectToAction(
-                    TempData["Action"].ToString(),
-                    TempData["Controller"].ToString());
-            }
-            else if (TempData.Count.Equals(3)) // Action, Controller, QuizId
-            {
-                return RedirectToAction(
-                    TempData["Action"].ToString(),
-                    TempData["Controller"].ToString(),
-                    new { id = TempData["QuizId"].ToString() });
-            }
-            else if (TempData.Count.Equals(4)) // Action, Controller, QuizId, QuestionId
-            {
-                return RedirectToAction(
-                    TempData["Action"].ToString(),
-                    TempData["Controller"].ToString(),
-                    new
-                    { quizId = TempData["QuizId"].ToString(),
-                        id = TempData["QuestionId"].ToString() });
-            }
-
-            return RedirectToAction("Index", "Home"); // Something happened so just go back to main front page
-        }
         #endregion
     }
 }

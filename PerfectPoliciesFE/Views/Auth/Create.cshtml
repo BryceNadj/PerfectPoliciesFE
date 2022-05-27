@@ -3,21 +3,36 @@
 @{
     ViewData["Title"] = "Create";
 
-    string action = "Index";
-    string controller = "Home";
-    string quizId = null;
-    string questionId = null;
-
-    try
+    if (ViewBag.Error != null)
     {
-        action = TempData["Action"].ToString();
-        controller = TempData["Controller"].ToString();
-        quizId = TempData["QuizId"].ToString();
-        questionId = TempData["QuestionId"].ToString();
+        @Html.Raw("<script> alert('" + ViewBag.Error.ToString() + "') </script>")
     }
-    catch (Exception) { }
 
-    TempData.Keep();
+    @using Microsoft.AspNetCore.Http;
+    @inject IHttpContextAccessor HttpContextAccessor;
+
+    string mainId;
+    string quizId;
+
+    if (@HttpContextAccessor.HttpContext.Session.GetString("QuestionId").Equals(""))
+    // If QuestionId is NOT present, set mainId to the quizId instead
+    {
+        mainId = @HttpContextAccessor.HttpContext.Session.GetString("QuizId");
+        quizId = null;
+    }
+    else
+    // Else (questionId is present) mainId is QuestionId and quizId is QuizId
+    {
+        mainId = @HttpContextAccessor.HttpContext.Session.GetString("QuestionId");
+        quizId = @HttpContextAccessor.HttpContext.Session.GetString("QuizId");
+    }
+
+    // url when on question view: controller/action/quizId
+    // url when on option view:   controller/action/questionId?quizId
+    //     I really shot myself in the foot with this one
+
+    string action = @HttpContextAccessor.HttpContext.Session.GetString("Action");
+    string controller = @HttpContextAccessor.HttpContext.Session.GetString("Controller");
 }
 
 <h1>Create</h1>
@@ -46,6 +61,6 @@
 </div>
 
 <div>
-    @Html.ActionLink("Back to List", @action, @controller, new { id = questionId, quizId = @quizId })
+    @Html.ActionLink("Back to List", @action, @controller, new { id = mainId, quizId = @quizId })
 </div>
 

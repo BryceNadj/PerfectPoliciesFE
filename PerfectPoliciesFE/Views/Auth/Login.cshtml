@@ -3,27 +3,37 @@
 @{
     ViewData["Title"] = "Login";
 
-    TempData.Keep();
     if (ViewBag.Error != null)
     {
-        @Html.Raw("<script> alert('" + ViewBag.Error.ToString() + "') </script>") 
+        @Html.Raw("<script> alert('" + ViewBag.Error.ToString() + "') </script>")
     }
 
-    string action = "Index";
-    string controller = "Home";
-    string quizId = null;
-    string questionId = null;
+    @using Microsoft.AspNetCore.Http;
+    @inject IHttpContextAccessor HttpContextAccessor;
 
-    try
+    string mainId;
+    string quizId;
+
+    if (@HttpContextAccessor.HttpContext.Session.GetString("QuestionId").Equals(""))
+    // If QuestionId is NOT present, set mainId to the quizId instead
     {
-        action = TempData["Action"].ToString();
-        controller = TempData["Controller"].ToString();
-        quizId = TempData["QuizId"].ToString();
-        questionId = TempData["QuestionId"].ToString();
-    } catch(Exception) { }
-
-    TempData.Keep();
+        mainId = @HttpContextAccessor.HttpContext.Session.GetString("QuizId");
+        quizId = null;
     }
+    else
+    // Else (questionId is present) mainId is QuestionId and quizId is QuizId
+    {
+        mainId = @HttpContextAccessor.HttpContext.Session.GetString("QuestionId");
+        quizId = @HttpContextAccessor.HttpContext.Session.GetString("QuizId");
+    }
+
+    // url when on question view: controller/action/quizId
+    // url when on option view:   controller/action/questionId?quizId
+    //     I really shot myself in the foot with this one
+
+    string action = @HttpContextAccessor.HttpContext.Session.GetString("Action");
+    string controller = @HttpContextAccessor.HttpContext.Session.GetString("Controller");
+}
 
 <h1>Login</h1>
 
@@ -51,9 +61,9 @@
 </div>
 
 <div>
-    @Html.ActionLink("Create Account", "Create", "Auth", new { id = questionId, quizId = @quizId })
+    @Html.ActionLink("Create Account", "Create", "Auth", new { id = mainId, quizId = @quizId })
     <br />
-    @Html.ActionLink("Back to List", @action, @controller, new { id = questionId, quizId = @quizId })
+    @Html.ActionLink("Back to List", @action, @controller, new { id = mainId, quizId = @quizId })
 
 </div>
 

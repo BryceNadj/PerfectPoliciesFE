@@ -1,16 +1,17 @@
 ﻿using System;
+using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using PerfectPoliciesFE.Helpers;
 using PerfectPoliciesFE.Services;
 using PerfectPoliciesFE.Models;
 using PerfectPoliciesFE.Models.QuizModels;
 using PerfectPoliciesFE.Models.OptionModels;
 using PerfectPoliciesFE.Models.QuestionModels;
-using System.Net.Http.Headers;
 
 namespace PerfectPoliciesFE
 {
@@ -46,6 +47,9 @@ namespace PerfectPoliciesFE
                 opts.Cookie.HttpOnly = true;
                 opts.Cookie.IsEssential = true;
             });
+
+            services.AddSingleton<RouteValuesHelper>();
+            services.AddHttpContextAccessor();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 

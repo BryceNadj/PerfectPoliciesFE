@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using PerfectPoliciesFE.Helpers;
 using PerfectPoliciesFE.Models;
 
 namespace PerfectPoliciesFE.Controllers
@@ -8,10 +10,12 @@ namespace PerfectPoliciesFE.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly RouteValuesHelper _routeValuesHelper;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, RouteValuesHelper routeValuesHelper)
         {
             _logger = logger;
+            _routeValuesHelper = routeValuesHelper;
         }
 
         /// <summary>
@@ -19,7 +23,7 @@ namespace PerfectPoliciesFE.Controllers
         /// </summary>
         public IActionResult Index()
         {
-            SetupTempData("Index", "Home");
+            _routeValuesHelper.SetupRouteValues("Index", "Home");
             return View();
         }
 
@@ -28,7 +32,7 @@ namespace PerfectPoliciesFE.Controllers
         /// </summary>
         public IActionResult Privacy()
         {
-            SetupTempData("Privacy", "Home");
+            _routeValuesHelper.SetupRouteValues("Privacy", "Home");
             return View();
         }
 
@@ -37,7 +41,7 @@ namespace PerfectPoliciesFE.Controllers
         /// </summary>
         public IActionResult Help()
         {
-            SetupTempData("Help", "Home");
+            _routeValuesHelper.SetupRouteValues("Help", "Home");
             return View();
         }
 
@@ -45,19 +49,6 @@ namespace PerfectPoliciesFE.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-
-        /// <summary>
-        /// Sets up the name of the action and controller in TempData so any view can redirect to the right action if it needs to
-        /// </summary>
-        /// <param name="action">The name of the action</param>
-        /// <param name="controller">The name of the controller</param>
-        private void SetupTempData(string action, string controller)
-        {
-            TempData.Clear();
-            TempData["Action"] = action;
-            TempData["Controller"] = controller;
-            TempData.Keep();
         }
     }
 }

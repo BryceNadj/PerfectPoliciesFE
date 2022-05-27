@@ -18,16 +18,18 @@ namespace PerfectPoliciesFE.Controllers
         private readonly IApiRequest<Question> _apiRequest;
         private readonly IApiRequest<Quiz> _apiQuizRequest;
         private IWebHostEnvironment _environment;
+        private readonly RouteValuesHelper _routeValuesHelper;
 
 
         private readonly string questionController = "Question";
 
         // GET: QuestionController
-        public QuestionController(IApiRequest<Question> apiRequest, IApiRequest<Quiz> apiQuizRequest, IWebHostEnvironment environment)
+        public QuestionController(IApiRequest<Question> apiRequest, IApiRequest<Quiz> apiQuizRequest, IWebHostEnvironment environment, RouteValuesHelper routeValuesHelper)
         {
             _apiRequest = apiRequest;
             _apiQuizRequest = apiQuizRequest;
             _environment = environment;
+            _routeValuesHelper = routeValuesHelper;
         }
 
         // GET: QuestionController/QuestionsByQuizId/{quizId}
@@ -41,7 +43,7 @@ namespace PerfectPoliciesFE.Controllers
             List<Question> questions = _apiRequest.GetAll(questionController); 
             var filteredList = questions.Where(c => c.QuizId.Equals(id)).ToList();
 
-            SetupTempData(new string[] { 
+            _routeValuesHelper.SetupSessionVariables(new string[] { 
                 "QuestionsByQuizId", // Action
                 questionController,  // Controller
                 id.ToString() });    // QuizId
@@ -58,7 +60,7 @@ namespace PerfectPoliciesFE.Controllers
         {
             if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
             {
-                string[] routeValues = SetupRouteValues("QuestionsByQuizId", questionController, id);
+                string[] routeValues = _routeValuesHelper.SetupRouteValues("QuestionsByQuizId", questionController, id);
 
                 return RedirectToAction("Login", "Auth", new { routeValues = routeValues });
             }
@@ -85,7 +87,7 @@ namespace PerfectPoliciesFE.Controllers
         {
             if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
             {
-                string[] routeValues = SetupRouteValues("QuestionsByQuizId", questionController, question.QuizId);
+                string[] routeValues = _routeValuesHelper.SetupRouteValues("QuestionsByQuizId", questionController, question.QuizId);
 
                 return RedirectToAction("Login", "Auth", new { routeValues = routeValues });
             }
@@ -122,7 +124,7 @@ namespace PerfectPoliciesFE.Controllers
             Question question = _apiRequest.GetSingle(questionController, id);
             ViewBag.quizId = question.QuizId;
 
-            SetupTempData(new string[] { "QuestionsByQuizId", questionController, question.QuizId.ToString() });
+            _routeValuesHelper.SetupSessionVariables(new string[] { "QuestionsByQuizId", questionController, question.QuizId.ToString() });
 
             return View(question);
         }
@@ -138,7 +140,7 @@ namespace PerfectPoliciesFE.Controllers
             Question question = _apiRequest.GetSingle(questionController, id);
             if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
             {
-                string[] routeValues = SetupRouteValues("QuestionsByQuizId", questionController, question.QuizId);
+                string[] routeValues = _routeValuesHelper.SetupRouteValues("QuestionsByQuizId", questionController, question.QuizId);
 
                 return RedirectToAction("Login", "Auth", new { routeValues = routeValues });
             }
@@ -165,7 +167,7 @@ namespace PerfectPoliciesFE.Controllers
                 {
                     // Quiz quiz = _apiQuizRequest.GetSingle(quizController, question.QuizId);
 
-                    string[] routeValues = SetupRouteValues("QuestionsByQuizId", questionController, question.QuizId);
+                    string[] routeValues = _routeValuesHelper.SetupRouteValues("QuestionsByQuizId", questionController, question.QuizId);
 
                     return RedirectToAction("Login", "Auth", new { routeValues = routeValues });
                 }
@@ -193,7 +195,7 @@ namespace PerfectPoliciesFE.Controllers
             Question question = _apiRequest.GetSingle(questionController, id);
             if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
             {
-                string[] routeValues = SetupRouteValues("QuestionsByQuizId", questionController, question.QuizId);
+                string[] routeValues = _routeValuesHelper.SetupRouteValues("QuestionsByQuizId", questionController, question.QuizId);
 
                 return RedirectToAction("Login", "Auth", new { routeValues = routeValues });
             }
@@ -218,7 +220,7 @@ namespace PerfectPoliciesFE.Controllers
             {
                 if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
                 {
-                    string[] routeValues = SetupRouteValues("QuestionsByQuizId", questionController, question.QuizId);
+                    string[] routeValues = _routeValuesHelper.SetupRouteValues("QuestionsByQuizId", questionController, question.QuizId);
 
                     return RedirectToAction("Login", "Auth", new { routeValues = routeValues });
                 }
@@ -238,38 +240,6 @@ namespace PerfectPoliciesFE.Controllers
 
 
         #region Extra Methods
-
-        /// <summary>
-        /// Places the values passed in through the routeValues param into TempData so any view can redirect to the right action if it needs to
-        /// </summary>
-        /// <param name="routeValues">The string[] containing the route values</param>
-        private void SetupTempData(string[] routeValues)
-        {
-            TempData.Clear();
-
-            TempData["Action"] = routeValues[0];
-            TempData["Controller"] = routeValues[1];
-            TempData["QuizId"] = routeValues[2];
-
-            TempData.Keep();
-        }
-
-        /// <summary>
-        /// Inserts the action, controller and quizId into a string array to pass into the SetupTempData(string[]) method
-        /// </summary>
-        /// <param name="action">The name of the action</param>
-        /// <param name="controller">The name of the controller</param>
-        /// <param name="quizId">The quiz id</param>
-        private string[] SetupRouteValues(string action, string controller, int quizId)
-        {
-            string[] routeValues = new string[] { 
-                action, 
-                controller, 
-                quizId.ToString() };
-            SetupTempData(routeValues);
-
-            return routeValues;
-        }
 
         [HttpPost]
         public async Task<IActionResult> UploadFile(IFormFile file)
