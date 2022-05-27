@@ -11,6 +11,7 @@ namespace PerfectPoliciesFE.Services
         private static HttpClient _client;
         // required to gain access to the context
         private readonly HttpContext _httpContext;
+
         public ApiRequest(IHttpContextAccessor httpContextAccessor, IHttpClientFactory factory)
         {
             // injecting a reference to the current context
@@ -35,6 +36,15 @@ namespace PerfectPoliciesFE.Services
                     new AuthenticationHeaderValue("Bearer", _httpContext.Session.GetString("Token"));
             }
         }
+
+        public T Create(string controllerName, T entity)
+        {
+            HttpResponseMessage response = _client.PostAsJsonAsync(controllerName, entity).Result;
+
+            var responseEntity = response.Content.ReadAsAsync<T>().Result;
+
+            return responseEntity;
+        }
             
         public List<T> GetAll(string controllerName)
         {
@@ -54,9 +64,9 @@ namespace PerfectPoliciesFE.Services
             return entityResult;
         }
 
-        public T Create(string controllerName, T entity)
+        public T Edit(string controllerName, T entity, int id)
         {
-            HttpResponseMessage response = _client.PostAsJsonAsync(controllerName, entity).Result;
+            HttpResponseMessage response = _client.PutAsJsonAsync($"{controllerName}/{id}", entity).Result;
 
             var responseEntity = response.Content.ReadAsAsync<T>().Result;
 
@@ -66,15 +76,6 @@ namespace PerfectPoliciesFE.Services
         public void Delete(string controllerName, int id)
         {
             HttpResponseMessage response = _client.DeleteAsync($"{controllerName}/{id}").Result;
-        }
-
-        public T Edit(string controllerName, T entity, int id)
-        {
-            HttpResponseMessage response = _client.PutAsJsonAsync($"{controllerName}/{id}", entity).Result;
-
-            var responseEntity = response.Content.ReadAsAsync<T>().Result;
-
-            return responseEntity;
         }
 
         /// <summary>
