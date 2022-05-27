@@ -51,9 +51,9 @@
 </div>
 
 <div>
-    @Html.ActionLink("Create Account", "Create", "Auth", new { id = @quizId, questionId = questionId })
+    @Html.ActionLink("Create Account", "Create", "Auth", new { id = questionId, quizId = @quizId })
     <br />
-    @Html.ActionLink("Back to List", @action, @controller, new { id = @quizId, questionId = questionId })
+    @Html.ActionLink("Back to List", @action, @controller, new { id = questionId, quizId = @quizId })
 
 </div>
 
