@@ -19,12 +19,17 @@ namespace PerfectPoliciesFE.Controllers
         }
 
         // GET: AuthController/Create
+        /// <returns>Create user account view</returns>
         public ActionResult Create()
         {
             return View();
         }
 
         // POST: AuthController/Create
+        /// <summary>
+        /// Creates an account for the user and logs them in
+        /// </summary>
+        /// <param name="userInfo">The username and password to make the account with</param>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(UserInfo userInfo)
@@ -37,6 +42,7 @@ namespace PerfectPoliciesFE.Controllers
             }
             catch
             {
+                ViewBag.ErrorMessage = "Username already exists";
                 return RedirectIActionResult();
             }
         }
@@ -46,6 +52,10 @@ namespace PerfectPoliciesFE.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Logs the user in and generates a session token
+        /// </summary>
+        /// <param name="user">The user to log in</param>
         [HttpPost]
         public IActionResult Login(UserInfo user)
         {
@@ -78,6 +88,9 @@ namespace PerfectPoliciesFE.Controllers
             return RedirectIActionResult();
         }
 
+        /// <summary>
+        /// Logs the user out
+        /// </summary>
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();

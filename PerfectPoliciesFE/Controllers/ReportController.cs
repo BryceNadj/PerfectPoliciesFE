@@ -21,6 +21,10 @@ namespace PerfectPoliciesFE.Controllers
             _client = factory.CreateClient("ApiClient");
         }
 
+        /// <summary>
+        /// Gets the number of options for every question
+        /// </summary>
+        /// <returns>The OptionQuestionCount report view</returns>
         public IActionResult OptionQuestionCount()
         {
             var response = _client.GetAsync("Report/OptionQuestionCount").Result;
@@ -52,6 +56,10 @@ namespace PerfectPoliciesFE.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Exports data
+        /// </summary>
+        /// <returns>A file that the users web browser will automatically download which contains the chart data</returns>
         public IActionResult ExportData()
         {
             // Get the data we need to export

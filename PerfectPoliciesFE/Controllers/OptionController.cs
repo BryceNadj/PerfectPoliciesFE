@@ -24,31 +24,13 @@ namespace PerfectPoliciesFE.Controllers
             _apiRequest = apiRequest;
             _apiQuestionRequest = apiQuestionRequest;
         }
-        /*
-        [HttpPost]
-        public IActionResult Filter(IFormCollection collection)
-        {
-            var result = collection["optionDDL"].ToString();
-            return RedirectToAction("Index", new { filter = result });
-        }
-        */
-
-        
-        // GET: OptionController
-        public ActionResult Index(string filter = "")
-        {
-            var optionList = _apiRequest.GetAll(optionController);
-
-            if (!String.IsNullOrEmpty(filter))
-            {
-                var optionFilteredList = optionList.Where(c => c.OptionText == filter);
-                return View(optionFilteredList);
-            }
-
-            return View(optionList);
-        }
 
         // GET: OptionController/OptionsByQuestionId/{questionId}?quizId={quizId}
+        /// <summary>
+        /// Gets a list of options where the QuestionId is equal the Id of the question that was selected
+        /// </summary>
+        /// <param name="id">The Id of the question</param>
+        /// <returns>The option view</returns>
         public ActionResult OptionsByQuestionId(int id, int quizId)
         {
             List<Option> options = _apiRequest.GetAll(optionController); 
@@ -65,29 +47,11 @@ namespace PerfectPoliciesFE.Controllers
             return View("Index", filteredOptionList);
         }
 
-        // GET: OptionController/Details/5
-        public ActionResult Details(int id)
-        {
-            Option option = _apiRequest.GetSingle(optionController, id);
-            Question question = _apiQuestionRequest.GetSingle(questionController, option.QuestionId);
-            ViewBag.quizId = question.QuizId;
-
-            SetupTempData(new string[] { "OptionsByQuestionId", optionController, question.QuizId.ToString(), option.QuestionId.ToString() });
-
-            return View(option);
-        }
-
-        // GET: OptionController/Create
-        public ActionResult Create()
-        {
-            if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
-            {
-                return RedirectToAction("Login", "Auth");
-            }
-
-            return View();
-        }
-
+        /// <summary>
+        /// Creates an option with the Id of a specified question
+        /// </summary>
+        /// <param name="id">The question id</param>
+        /// <returns>The option create view</returns>
         public ActionResult CreateForQuestion(int id)
         {
             Question question = _apiQuestionRequest.GetSingle(questionController, id);
@@ -111,6 +75,11 @@ namespace PerfectPoliciesFE.Controllers
         }
 
         // POST: OptionController/Create
+        /// <summary>
+        /// Creates an option in the database
+        /// </summary>
+        /// <param name="option">The option data to create for</param>
+        /// <returns>The option view</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(OptionCreate option)
@@ -146,7 +115,29 @@ namespace PerfectPoliciesFE.Controllers
             }
         }
 
+        // GET: OptionController/Details/5
+        /// <summary>
+        /// Gets details of an option
+        /// </summary>
+        /// <param name="id">Id of the option to get details for</param>
+        /// <returns>The details page for an option</returns>
+        public ActionResult Details(int id)
+        {
+            Option option = _apiRequest.GetSingle(optionController, id);
+            Question question = _apiQuestionRequest.GetSingle(questionController, option.QuestionId);
+            ViewBag.quizId = question.QuizId;
+
+            SetupTempData(new string[] { "OptionsByQuestionId", optionController, question.QuizId.ToString(), option.QuestionId.ToString() });
+
+            return View(option);
+        }
+
         // GET: OptionController/Edit/5
+        /// <summary>
+        /// Edits an option by its Id
+        /// </summary>
+        /// <param name="id">The option id</param>
+        /// <returns>The edit option view</returns>
         public ActionResult Edit(int id)
         {
             Option option = _apiRequest.GetSingle(optionController, id);
@@ -165,6 +156,12 @@ namespace PerfectPoliciesFE.Controllers
         }
 
         // POST: OptionController/Edit/5
+        /// <summary>
+        /// Edits the option in the database
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="option"></param>
+        /// <returns>The option view with the updated option</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, Option option)
@@ -193,6 +190,11 @@ namespace PerfectPoliciesFE.Controllers
         }
 
         // GET: OptionController/Delete/5
+        /// <summary>
+        /// Deletes a option by its Id
+        /// </summary>
+        /// <param name="id">The option Id</param>
+        /// <returns>The delete option view</returns>
         public ActionResult Delete(int id)
         {
             Option option = _apiRequest.GetSingle(optionController, id);
@@ -211,6 +213,11 @@ namespace PerfectPoliciesFE.Controllers
         }
 
         // POST: OptionController/Delete/5
+        /// <summary>
+        /// Deletes the option in the database
+        /// </summary>
+        /// <param name="id">The Id of the option to be deleted</param>
+        /// <returns>The option view now without the option that got deleted</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)
@@ -240,6 +247,11 @@ namespace PerfectPoliciesFE.Controllers
         }
 
         #region Extra Methods
+
+        /// <summary>
+        /// Places the values passed in through the routeValues param into TempData so any view can redirect to the right action if it needs to
+        /// </summary>
+        /// <param name="routeValues">The string[] containing the route values</param>
         private void SetupTempData(string[] routeValues)
         {
             TempData.Clear();
@@ -252,6 +264,13 @@ namespace PerfectPoliciesFE.Controllers
             TempData.Keep();
         }
 
+        /// <summary>
+        /// Inserts the action, controller, quizId and questionId into a string array to pass into the SetupTempData(string[]) method
+        /// </summary>
+        /// <param name="action">The name of the action</param>
+        /// <param name="controller">The name of the controller</param>
+        /// <param name="quizId">The quiz id</param>
+        /// <param name="questionId">The question id</param>
         private string[] SetupRouteValues(string action, string controller, int quizId, int questionId)
         {
             string[] routeValues = new string[] { 

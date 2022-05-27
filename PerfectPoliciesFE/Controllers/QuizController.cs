@@ -30,6 +30,11 @@ namespace PerfectPoliciesFE.Controllers
         }
 
         // GET: QuizController
+        /// <summary>
+        /// Gets all quizzes
+        /// </summary>
+        /// <param name="filter">An optional filter to be applied</param>
+        /// <returns>A list of quizzes</returns>
         public ActionResult Index(string filter = "")
         {
             var quizList = _apiRequest.GetAll(quizController);
@@ -48,15 +53,11 @@ namespace PerfectPoliciesFE.Controllers
             return View(quizList);
         }
 
-        // GET: QuizController/Details/5
-        public ActionResult Details(int id)
-        {
-            Quiz quiz = _apiRequest.GetSingle(quizController, id);
-
-            return View(quiz);
-        }
-
         // GET: QuizController/Create
+        /// <summary>
+        /// Creates a quiz
+        /// </summary>
+        /// <returns>The quiz create view</returns>
         public ActionResult Create()
         {
             if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
@@ -70,6 +71,11 @@ namespace PerfectPoliciesFE.Controllers
         }
 
         // POST: QuizController/Create
+        /// <summary>
+        /// Creates a quiz in the database
+        /// </summary>
+        /// <param name="quiz">The quiz data to create for</param>
+        /// <returns>The quiz view</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(QuizCreate quiz)
@@ -95,7 +101,25 @@ namespace PerfectPoliciesFE.Controllers
             }
         }
 
+        // GET: QuizController/Details/5
+        /// <summary>
+        /// Gets details of a quiz
+        /// </summary>
+        /// <param name="id">Id of the quiz to get details for</param>
+        /// <returns>The details page for a quiz</returns>
+        public ActionResult Details(int id)
+        {
+            Quiz quiz = _apiRequest.GetSingle(quizController, id);
+
+            return View(quiz);
+        }
+
         // GET: QuizController/Edit/5
+        /// <summary>
+        /// Edits a quiz by its Id
+        /// </summary>
+        /// <param name="id">The quiz id</param>
+        /// <returns>The edit quiz view</returns>
         public ActionResult Edit(int id)
         {
             if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
@@ -111,6 +135,12 @@ namespace PerfectPoliciesFE.Controllers
         }
 
         // POST: QuizController/Edit/5
+        /// <summary>
+        /// Edits the quiz in the database
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="quiz"></param>
+        /// <returns>The quiz view with the updated quiz</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, Quiz quiz)
@@ -135,6 +165,11 @@ namespace PerfectPoliciesFE.Controllers
         }
 
         // GET: QuizController/Delete/5
+        /// <summary>
+        /// Deletes a quiz by its Id
+        /// </summary>
+        /// <param name="id">The quiz Id</param>
+        /// <returns>The delete quiz view</returns>
         public ActionResult Delete(int id)
         {
             if (!AuthenticationHelper.isAuthenticated(this.HttpContext))
@@ -150,6 +185,11 @@ namespace PerfectPoliciesFE.Controllers
         }
 
         // POST: QuizController/Delete/5
+        /// <summary>
+        /// Deletes the quiz in the database
+        /// </summary>
+        /// <param name="id">The Id of the quiz to be deleted</param>
+        /// <returns>The quiz view now without the quiz that got deleted</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)
@@ -173,6 +213,8 @@ namespace PerfectPoliciesFE.Controllers
             }
         }
 
+        #region Extra Methods
+
         [HttpPost]
         public IActionResult FilterQuiz(IFormCollection collection)
         {
@@ -183,7 +225,10 @@ namespace PerfectPoliciesFE.Controllers
             return View("Index", filterList);
         }
 
-        #region Extra Methods
+        /// <summary>
+        /// Places the values passed in through the routeValues param into TempData so any view can redirect to the right action if it needs to
+        /// </summary>
+        /// <param name="routeValues">The string[] containing the route values</param>
         private void SetupTempData(string[] routeValues)
         {
             TempData.Clear();
@@ -194,6 +239,11 @@ namespace PerfectPoliciesFE.Controllers
             TempData.Keep();
         }
 
+        /// <summary>
+        /// Inserts the action and controller into a string array to pass into the SetupTempData(string[]) method
+        /// </summary>
+        /// <param name="action">The name of the action</param>
+        /// <param name="controller">The name of the controller</param>
         private string[] SetupRouteValues(string action, string controller)
         {
             string[] routeValues = new string[] { action, controller };
