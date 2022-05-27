@@ -249,17 +249,12 @@ namespace PerfectPoliciesFE.Controllers
                 return View();
             }
         }
-
-<<<<<<< HEAD
         #region Extra Methods
 
         /// <summary>
         /// Places the values passed in through the routeValues param into TempData so any view can redirect to the right action if it needs to
         /// </summary>
         /// <param name="routeValues">The string[] containing the route values</param>
-=======
-#region Extra Methods
->>>>>>> d9aec12de57858ab2b0ff1f4850fdc05b75c2b45
         private void SetupTempData(string[] routeValues)
         {
             TempData.Clear();
@@ -291,6 +286,6 @@ namespace PerfectPoliciesFE.Controllers
 
             return routeValues;
         }
-#endregion
+        #endregion
     }
 }
