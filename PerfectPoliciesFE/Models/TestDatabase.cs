@@ -42,6 +42,11 @@ namespace PerfectPoliciesFE.Models
                 new Option { OptionId = 6, OptionText = "Pineapple", Order = "C", IsCorrect = false, QuestionId = 2 },
                 new Option { OptionId = 7, OptionText = "I don't know", Order = "D", IsCorrect = false, QuestionId = 2 }
             };
+
+            Users = new List<UserInfo>
+            {
+                new UserInfo { Username = "a", Password = "a" }
+            };
         }
     }
 }
