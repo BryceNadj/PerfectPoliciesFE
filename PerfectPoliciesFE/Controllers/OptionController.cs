@@ -51,7 +51,11 @@ namespace PerfectPoliciesFE.Controllers
         // GET: OptionController/OptionsByQuestionId/{questionId}?quizId={quizId}
         public ActionResult OptionsByQuestionId(int id, int quizId)
         {
+#if TEST
+            List<Option> options = _apiRequest.GetAllForEndpoint("OptionsByQuestionId");
+#else
             List<Option> options = _apiRequest.GetAll(optionController); 
+#endif
             var filteredOptionList = options.Where(c => c.QuestionId.Equals(id)).ToList();
 
             ViewBag.quizId = quizId;
@@ -239,7 +243,7 @@ namespace PerfectPoliciesFE.Controllers
             }
         }
 
-        #region Extra Methods
+#region Extra Methods
         private void SetupTempData(string[] routeValues)
         {
             TempData.Clear();
@@ -264,6 +268,6 @@ namespace PerfectPoliciesFE.Controllers
 
             return routeValues;
         }
-        #endregion
+#endregion
     }
 }
