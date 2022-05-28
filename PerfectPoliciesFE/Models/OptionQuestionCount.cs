@@ -9,5 +9,8 @@ namespace PerfectPoliciesFE.Models
 
         [Display(Name = "Option Count")]
         public int OptionCount { get; set; }
+
+        [Display(Name = "Quiz Id")]
+        public int QuizId { get; set; }
     }
 }

@@ -27,11 +27,13 @@ namespace PerfectPoliciesFE.Controllers
         /// <returns>The OptionQuestionCount report view</returns>
         public IActionResult OptionQuestionCount()
         {
+            int quizId = int.Parse(HttpContext.Session.GetString("QuizId"));
+
             var response = _client.GetAsync("Report/OptionQuestionCount").Result;
 
-            List<OptionQuestionCount> optionQuestionCount = response.Content.ReadAsAsync<List<OptionQuestionCount>>().Result;
+            List<OptionQuestionCount> optionQuestionCount = response.Content.ReadAsAsync<List<OptionQuestionCount>>().Result.Where(c => c.QuizId.Equals(quizId)).ToList();
 
-            // serialise the report data and save in the session.
+            // serialise the report data and save in the session. 
             var jsonData = JsonSerializer.Serialize(optionQuestionCount);
             HttpContext.Session.SetString("ReportData", jsonData);
 
@@ -85,7 +87,7 @@ namespace PerfectPoliciesFE.Controllers
             // CSV MIME type: "text/csv"
 
             // Return the memory stream as a file
-            return File(stream, "application/octet-stream", $"Report_Data{DateTime.Now.ToString("ddMMMyy_HHmmss")}.csv");
+            return File(stream, "application/octet-stream", $"QuizId_{HttpContext.Session.GetString("QuizId")}_Report_Data{DateTime.Now.ToString("ddMMMyy_HHmmss")}.csv");
         }
     }
 }
