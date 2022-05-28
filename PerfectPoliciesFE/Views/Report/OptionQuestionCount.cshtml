@@ -1,11 +1,25 @@
 ﻿<div><canvas id="barChart"></canvas></div>
+@{ 
+    if (ViewBag.Error != null)
+    {
+        @Html.Raw("<script> alert('" + ViewBag.Error.ToString() + "') </script>")
+    }
+
+    @using Microsoft.AspNetCore.Http;
+    @inject IHttpContextAccessor HttpContextAccessor;
+    string quizId;
+    quizId = @HttpContextAccessor.HttpContext.Session.GetString("QuizId");
+}
 
 <a asp-action="ExportData" asp-controller="Report" class="btn btn-dark">Export CSV</a>
+<br />
+@Html.ActionLink("Back to List", "QuestionsByQuizId", "Question", new { id = quizId })
+
 
 @{ ChartJSCore.Models.Chart chart = (ChartJSCore.Models.Chart)ViewData["chart"];}
 
 <script src="~/lib/Chart.js/chart.min.js"></script>
 
 <script>
-    @Html.Raw(chart.CreateChartCode("barChart"));
+@Html.Raw(chart.CreateChartCode("barChart"));
 </script>
