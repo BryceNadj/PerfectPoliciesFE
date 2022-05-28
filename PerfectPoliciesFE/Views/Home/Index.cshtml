@@ -2,11 +2,15 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="d-flex justify-content-center align-items-center" style="height: 76vh">
+<div class="d-flex justify-content-lg-center align-items-center" style="height: 76vh">
+    <img src="~/Assets/generic-logo.png" alt="image" style="padding: 100px" width="auto" height="300" />
 
     <form asp-action="FilterQuiz" asp-controller="Quiz">
         <label>Search Quiz Topic</label>
         <input type="text" class="form-control" name="topic" />
         <input type="submit" class="btn btn-primary" value="Enter" />
     </form>
+</div>
+
+<div class="d-flex justify-content-lg-start">
 </div>
