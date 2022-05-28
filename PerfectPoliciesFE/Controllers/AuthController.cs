@@ -45,8 +45,8 @@ namespace PerfectPoliciesFE.Controllers
             }
             catch
             {
-                ViewBag.ErrorMessage = "Username already exists";
-                return RedirectIActionResult();
+                ViewBag.Error = "Username already exists";
+                return View();
             }
         }
 
@@ -113,14 +113,14 @@ namespace PerfectPoliciesFE.Controllers
             action = HttpContext.Session.GetString("Action");
             controller = HttpContext.Session.GetString("Controller");
 
-            if (HttpContext.Session.GetString("QuestionId") != null)
+            if (HttpContext.Session.GetString("QuestionId") != "")
             {
                 quizId = HttpContext.Session.GetString("QuizId");
                 questionId = HttpContext.Session.GetString("QuestionId");
 
                 return RedirectToAction(action, controller, new { quizId = quizId, id = questionId });
             }
-            else if (HttpContext.Session.GetString("QuizId") != null)
+            else if (HttpContext.Session.GetString("QuizId") != "")
             {
                 quizId = HttpContext.Session.GetString("QuizId");
 
