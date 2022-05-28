@@ -87,7 +87,7 @@ namespace PerfectPoliciesFE.Controllers
             // CSV MIME type: "text/csv"
 
             // Return the memory stream as a file
-            return File(stream, "application/octet-stream", $"QuizId_{HttpContext.Session.GetString("QuizId")}_Report_Data{DateTime.Now.ToString("ddMMMyy_HHmmss")}.csv");
+            return File(stream, "application/octet-stream", $"QuizId_{HttpContext.Session.GetString("QuizId")}_OptionCountForQuestions_{DateTime.Now.ToString("ddMMMyy_HHmmss")}.csv");
         }
     }
 }
