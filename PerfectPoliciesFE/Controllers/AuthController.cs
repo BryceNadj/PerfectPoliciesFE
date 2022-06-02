@@ -96,7 +96,7 @@ namespace PerfectPoliciesFE.Controllers
         /// </summary>
         public IActionResult Logout()
         {
-            HttpContext.Session.Clear();
+            HttpContext.Session.Remove("Token");
 
             return RedirectIActionResult();
         }
