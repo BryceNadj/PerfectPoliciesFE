@@ -6,8 +6,13 @@ namespace PerfectPoliciesFE.Models.QuizModels
     public class QuizCreate
     {
         // Attributes
+        [MaxLength(100)]
         public string Title { get; set; }
+
+        [MaxLength(100)]
         public string Topic { get; set; }
+
+        [MaxLength(100)]
         public string Author { get; set; }
 
         [Display(Name = "Date Created")]

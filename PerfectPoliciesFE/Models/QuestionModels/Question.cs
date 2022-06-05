@@ -9,16 +9,22 @@ namespace PerfectPoliciesFE.Models.QuestionModels
     {
         // Primary Key
         [Display(Name = "Question Id")]
+        [MaxLength(100)]
         public int QuestionId { get; set; }
 
         // Attributes
+        [MaxLength(100)]
         public string Topic { get; set; }
+
         [Display(Name = "Question Text")]
+        [MaxLength(100)]
         public string QuestionText { get; set; }
-        
-        #nullable enable
+
+
+#nullable enable
+        [MaxLength(100)]
         public string? Image { get; set; }
-        #nullable disable
+#nullable disable
 
         // Foreign Key
         [Display(Name = "Quiz Id")]

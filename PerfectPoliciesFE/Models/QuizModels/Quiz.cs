@@ -9,11 +9,17 @@ namespace PerfectPoliciesFE.Models.QuizModels
     {
         // Primary Key
         [Display(Name = "Quiz Id")]
+        [MaxLength(100)]
         public int QuizId { get; set; }
 
         // Attributes
+        [MaxLength(100)]
         public string Title { get; set; }
+
+        [MaxLength(100)]
         public string Topic { get; set; }
+
+        [MaxLength(100)]
         public string Author { get; set; }
         
         [Display(Name = "Date Created")]
