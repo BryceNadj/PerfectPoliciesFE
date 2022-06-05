@@ -67,7 +67,7 @@ namespace PerfectPoliciesFE.Controllers
             // var response = _client.PostAsJsonAsync("Auth/GenerateToken", user).Result;
             using (HttpClient client = new HttpClient())
             {
-                client.BaseAddress = new Uri("https://localhost:44363/api/");
+                client.BaseAddress = new Uri("https://perfectpoliciesapibrycenadj.azurewebsites.net/api/");
 
                 var response = client.PostAsJsonAsync("Auth/GenerateToken", user).Result;
 

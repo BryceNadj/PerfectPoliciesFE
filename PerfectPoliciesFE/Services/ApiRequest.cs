@@ -22,7 +22,7 @@ namespace PerfectPoliciesFE.Services
             if (_client == null)
             {
                 _client = new HttpClient();
-                _client.BaseAddress = new Uri("https://localhost:44363/api/");
+                _client.BaseAddress = new Uri("https://perfectpoliciesapibrycenadj.azurewebsites.net/api/");
                 _client.DefaultRequestHeaders.Clear();
                 _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             }
