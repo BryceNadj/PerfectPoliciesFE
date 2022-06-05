@@ -241,6 +241,11 @@ namespace PerfectPoliciesFE.Controllers
 
         #region Extra Methods
 
+        /// <summary>
+        /// Takes a file and sends it to the wwwroot\\Uploads address within the source files
+        /// </summary>
+        /// <param name="file">The file to upload</param>
+        /// <returns>Http response code indicating whether or not the process passed</returns>
         [HttpPost]
         public async Task<IActionResult> UploadFile(IFormFile file)
         {
@@ -248,7 +253,7 @@ namespace PerfectPoliciesFE.Controllers
             string folderRoot = Path.Combine(_environment.ContentRootPath, "wwwroot\\Uploads");
 
             // Combine filename and folder path
-            string filePath = Path.Combine(folderRoot, file.FileName);
+            string filePath = Path.Combine(folderRoot, file.FileName + DateTime.Now);
 
             try
             {
