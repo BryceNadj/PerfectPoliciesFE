@@ -15,9 +15,13 @@ namespace PerfectPoliciesFE.Helpers
             _httpContextAccessor = httpContextAccessor;
         }
 
+        /// <summary>
+        /// Takes a string[] of the routevalues and inserts them into the session variables
+        /// </summary>
+        /// <param name="routeValues">The route values</param>
         public void SetupSessionVariables(string[] routeValues)
         {
-            // Null all of the route values so anything that doesn't get changed here, also doesn't keep it's old value
+            // Null all of the route values so anything that doesn't get changed here doesn't keep it's current value
             // eg. questionId is set to 7 and this method gets called, only changing the action, controller and quizId.
             //   The questionId would still be 7 and it may cause a problem
             _httpContextAccessor.HttpContext.Session.SetString("Action", "");
