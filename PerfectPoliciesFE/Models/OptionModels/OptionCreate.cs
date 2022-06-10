@@ -1,5 +1,4 @@
-﻿using PerfectPoliciesFE.Models.QuestionModels;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace PerfectPoliciesFE.Models.OptionModels
 {
